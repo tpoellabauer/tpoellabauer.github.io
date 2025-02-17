@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holographic Resume</title>
+    <style>
+        @keyframes nodeHighlight {
+            0%, 100% { fill: rgba(0, 255, 204, 0.7); }
+            50% { fill: rgba(0, 255, 204, 1); }
+        }
+        @keyframes lineHighlight {
+            0%, 100% { stroke: rgba(0, 255, 204, 0.2); }
+            50% { stroke: rgba(0, 255, 204, 1); }
+        }
+        @keyframes crtRefresh {
+            0% { clip-path: inset(0 0 100% 0); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+        @keyframes typewriter {
+            0% { visibility: hidden; }
+            100% { visibility: visible; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        body {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #00ffcc;
+            font-family: "Courier New", monospace;
+            text-shadow: 0 0 1px #00ffcc, 0 0 6px #00ffcc;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            overflow: auto;
+        }
+        .linescan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 204, 0.1) 50%);
+            background-size: 100% 2px;
+            animation: linescan 10s infinite linear;
+            z-index: 1;
+        }
+        .node {
+            fill: rgba(0, 255, 204, 1.0);
+        }
+        .node-background {
+            fill: rgba(0, 0, 0, 1.0);
+        }
+        .line {
+            stroke: rgba(0, 255, 204, 0.2);
+            stroke-width: 4;
+            stroke-dasharray: 100%;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ffcc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #00ffcc;
+            position: relative;
+            overflow: auto;
+            visibility: hidden;
+            opacity: 0;
+            animation: fadeIn 1.25s forwards;
+        }
+        .container a {
+            color: #00ffcc;
+        }
+        .content {
+            display: flex;
+        }
+        .left {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #00ffcc;
+            max-width: 200px;
+        }
+        .right {
+            flex: 3;
+            padding: 20px;
+            text-align: justify;
+        }
+        h1, h2 {
+            border-bottom: 1px solid #00ffcc;
+            padding-bottom: 5px;
+        }
+        .crt-line {
+            width: 100%;
+            height: 2px;
+            background: #00ffcc;
+            margin: 10px 0;
+            opacity: 0.5;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .toc li {
+            margin: 10px 0;
+        }
+        .toc a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+        .banner {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0);
+            border-bottom: 1px solid rgb(0, 255, 204);
+            margin-bottom: 20px;
+            overflow: hidden;
+            perspective: 1000px;
+            filter: blur(0.001px);
+        }
+        .impressum-content {
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ffcc;
+            padding: 20px;
+            border: 1px solid #00ffcc;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+        <div class="container">
+        <div class="content">
+            <div class="left">
+                <h1>Thomas Pöllabauer</h1>
+                <p>Software Engineer | Computer Vision Scientist</p>
+                <div class="crt-line"></div>
+                <h2>Contents</h2>
+                <div class="toc">
+                    <ul>
+                        <li><a href="#about">About Me</a></li>
+                        <li><a href="#experience">Experience</a></li>
+                        <li><a href="#education">Education</a></li>
+                        <li><a href="#skills">Skills</a></li>
+                        <li><a href="#links">Links and Resources</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right">
+                <div class="banner">
+                    <svg width="100%" height="100%">
+                        <defs>
+                            <filter id="crtFilter">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur"/>
+                                <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 -5" result="crtEffect"/>
+                                <feBlend in="SourceGraphic" in2="crtEffect" mode="screen"/>
+                            </filter>
+                        </defs>
+                        <g id="neuralNetwork" class="neural-network" style="filter: url(#crtFilter);">
+                            <!-- Nodes will be created dynamically -->
+                        </g>
+                    </svg>
+                </div>
+                <h2 id="about">About Me</h2>
+                <p>A computer vision enthusiast with a longstanding passion for computer science, nurtured since high school. Interests evolved from microcontrollers and embedded systems to computer graphics, and ultimately to computer vision and machine learning. Passionate about translating research from the lab into practical applications that improve the way we work and live. Over six years of experience at the intersection of research and industry contributing to and leading industry and applied research projects.</p>
+                <h2 id="experience">Experience</h2>
+                <p><strong>Research Scientist Computer Vision and Machine Learning</strong> <br> 
+                    Fraunhofer Institute for Computer Graphics Research IGD <br> 
+                    (2020 - 2024)</p>
+                <p>&bull; Design and Application of State-of-the-Art Computer Vision Algoritms in Object Detection and Localication, Segmentation, Classification</p>
+                <p>&bull; Synthetic Data Generation for Machine Learning</p>
+                <p>&bull; Automated Quality Control</p>
+                <p>&bull; 3D Scene Reconstruction</p>
+                <p><strong>Research Assistant</strong> <br> 
+                    Fraunhofer Institute for Computer Graphics Research IGD <br> 
+                    (2018 - 2020)</p>
+                <p>&bull; Continous Integration and Testing</p>
+                <p>&bull; Optimization</p>
+                <div class="crt-line"></div>
+                <h2 id="education">Education</h2>
+                <p><strong>Doctor of Engineering in Computer Science and AI</strong> <br> 
+                    Technical University of Darmstadt <br> (2023 - 2025)</p>
+                <p><strong>Master of Science in Visual Computing</strong> <br> 
+                    Technical University of Darmstadt <br> (2017 - 2020)</p>
+                <p><strong>Bachelor of Science in Computer Science</strong> <br> 
+                    Technical University of Berlin <br> (2013 - 2017)</p>
+                <div class="crt-line"></div>
+                <h2 id="skills">Skills</h2>
+                <p>&bull; <strong>Specialization</strong> <br>
+                    Machine Learning for Computer Vision Tasks such as 2D (object) detection, 3 and 6 degrees-of-freedom (object) pose estimation, 
+                    classification, semantic segmentation, 3D scene reconstruction, zero- and few-shot methods, generative models 
+                    (Autoencoders, GANs, Diffusion Models; Machine Learning under constraints such as limited data or limited 
+                    computational resources.</p>
+                <p>&bull; <strong>Technical</strong> <br>
+                    Python for Machine Learning and Artificial Intelligence (PyTorch, TensorFlow, Keras, NumPy, Scikit‑learn, Pandas, etc.); 
+                    C/C++; Java; HTML/CSS; JavaScript; SQL; Git; Continous Integration; Linux; Shell (Bash/Zsh); Docker; SLURM; LaTeX; 
+                    Microsoft Office solutions.</p>
+                <p>&bull; <strong>Non-Technical</strong><br>
+                    English (professional proficiency); project management; team player; research design; scientific and technical writing; 
+                    process documentation; presentation of project and research results at conferences, fairs, and similar venues; 
+                    customer contact.</p>
+                <div class="crt-line"></div>
+                <h2 id="links">Links and Resources</h2>
+                <div id="links">
+                    <p><strong>Publications</strong> <br>
+                        You can find my scientific publications on my <a href="https://scholar.google.com/citations?user=HL14YPkAAAAJ&hl=de&oi=ao">Google Scholar</a> 
+                        and <a href="https://orcid.org/0000-0003-0075-1181">ORCID</a> profiles. </p>
+                    <p><strong>Datasets</strong> <br>
+                        You can find my published datasets for Machine Learning applications at 
+                        <a href="https://huggingface.co/tpoellabauer">Huggingface</a>. </p>
+                    <p><strong>Linkedin</strong> <br>
+                        If you want to connect on Linkedin, you can find me
+                        <a href="https://www.linkedin.com/in/tpoellabauer/">here</a>. </p>
+                </div>
+                <div class="crt-line"></div>
+                <h2 id="contact">Contact</h2>
+                <p>To discuss opportunities, please contact me via the following email address. Thank you. </p>
+                <p>Email: contact (at) this domain</p>
+                <p>Website: thomaspoellabauer.com</p>
+                <div class="crt-line"></div>
+                <a href="#" class="impressum-link" onclick="toggleImpressum()">Impressum</a>
+                <div id="impressum" class="impressum-content">
+                    <h2>Impressum</h2>
+                    <p><strong>Thomas Pöllabauer</strong></p>
+                    <p>Address: Elisabethenstraße 38, 64283, Germany</p>
+                    <p>Email: contact @ thomaspoellabauer . com</p>
+                    <p>Website: www.thomaspoellabauer.com</p>
+                    <p><strong>Haftung für Links: </strong>
+                        Diese Webseite enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let useCurves = false;
+        const nodeData = [
+                { cx: '10%', cy: '20%' },
+                { cx: '10%', cy: '60%' },
+                { cx: '30%', cy: '50%' },
+                { cx: '50%', cy: '20%' },
+                { cx: '50%', cy: '60%' },
+                { cx: '70%', cy: '30%' },
+                { cx: '70%', cy: '80%' },
+                { cx: '90%', cy: '20%' },
+                { cx: '90%', cy: '40%' },
+                { cx: '90%', cy: '80%' }
+            ];
+
+        function createNodes() {
+            const svg = document.querySelector('svg');
+            const neuralNetwork = document.getElementById('neuralNetwork');
+            
+            nodeData.forEach(data => {
+                const nodeBackground = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                nodeBackground.classList.add('node-background');
+                nodeBackground.setAttribute('cx', data.cx);
+                nodeBackground.setAttribute('cy', data.cy);
+                nodeBackground.setAttribute('r', '12');
+                neuralNetwork.appendChild(nodeBackground);
+
+                const node = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                node.classList.add('node');
+                node.setAttribute('cx', data.cx);
+                node.setAttribute('cy', data.cy);
+                node.setAttribute('r', '12');
+                neuralNetwork.appendChild(node);
+            });
+            neuralNetwork.filter = 'url(#crtFilter)';
+        }
+
+        function createSignalLines() {
+            const svg = document.querySelector('svg');
+            const layers = [
+                [nodeData[0], nodeData[1]],
+                [nodeData[2]],
+                [nodeData[3], nodeData[4]],
+                [nodeData[5], nodeData[6]],
+                [nodeData[7], nodeData[8], nodeData[9]]
+            ];
+
+            for (let i = 0; i < layers.length - 1; i++) {
+                for (let j = 0; j < layers[i].length; j++) {
+                    for (let k = 0; k < layers[i + 1].length; k++) {
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', useCurves ? 'path' : 'line');
+                        line.classList.add('line');
+                        const x1 = layers[i][j]['cx'];
+                        const y1 = layers[i][j]['cy'];
+                        const x2 = layers[i + 1][k]['cx'];
+                        const y2 = layers[i + 1][k]['cy'];
+                        if (useCurves) {
+                            const curve = `M${x1},${y1} C${x1},${(parseFloat(y1) + parseFloat(y2)) / 2} ${x2},${(parseFloat(y1) + parseFloat(y2)) / 2} ${x2},${y2}`;
+                            line.setAttribute('d', curve);
+                        } else {
+                            line.setAttribute('x1', x1);
+                            line.setAttribute('y1', y1);
+                            line.setAttribute('x2', x2);
+                            line.setAttribute('y2', y2);
+                        }
+                        svg.appendChild(line);
+                    }
+                }
+            }
+        }
+
+        function activateSignalLines() {
+            const lines = document.querySelectorAll('.line');
+            lines.forEach(line => {
+                line.style.animation = `lineHighlight 2s infinite`;
+                line.style.animationDelay = `${Math.random() * 3}s`;
+            });
+        }
+
+        function revealContent() {
+            const container = document.querySelector('.container');
+            container.style.visibility = 'visible';
+            const textElements = container.querySelectorAll('*');
+            textElements.forEach((element, index) => {
+                element.style.animation = `typewriter 3.5s steps(${element.textContent.length}) ${index * 0.025}s forwards`;
+            });
+        }
+
+        function toggleImpressum() {
+            const impressum = document.getElementById('impressum');
+            if (impressum.style.display === 'none' || impressum.style.display === '') {
+                impressum.style.display = 'block';
+            } else {
+                impressum.style.display = 'none';
+            }
+        }
+
+        createNodes();
+        createSignalLines();
+        activateSignalLines();
+        revealContent();
+    </script>
+</body>
+</html>

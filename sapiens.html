@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Unterseite</title>
+
+    <style>
+        /* Grundlayout */
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+
+            /* Endlos-Hintergrund */
+            background-image: url("StarField.jpg"); /* Pfad anpassen */
+            background-repeat: repeat;
+            background-position: top left;
+        }
+
+        /* Banner oben */
+        .banner {
+            height: 220px;
+            background-color: rgb(0, 0, 0); /* alternativ: background-image */
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        /* Content-Bereich */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+
+            /* Kontrast zum Hintergrund */
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .content p {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: white;
+            }
+
+            .content a {
+                color: #00bfff; /* Lichtschwert-Blau */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="banner">
+        <a href="#top" style="display: inline-block;">
+            <img src="logo.png" alt="Logo" style="height: 180px;">
+        </a>
+    </header>
+    <nav style="text-align: left; margin-top: 10px; margin-left: 1%;">
+        <a href="index.html" style="color: white; font-size: 1.2rem; text-decoration: underline;">
+            Zurück zur Hauptseite
+        </a>
+    </nav>
+
+    <main class="content">
+        <div style="display: flex; gap: 40px; align-items: flex-start;">
+            <div style="flex: 1; min-width: 220px;">
+                <img src="cover.jpg" alt="Cover" style="width: 100%; max-width: 300px; height: auto; display: block; border-radius: 8px;">
+            </div>
+            <div style="flex: 2;">
+                <p>
+                    2252. Schätzungen zufolge ist heute jeder Quadratmeter der Erdoberfläche eintausend Mal größer, als noch zum Beginn des Milleniums. 
+                    Neuralimplantate, kleine Computer im Hirn, machen es möglich. Sie machen die Erde größer, den Körper ewig jung und den Spaß riesengroß. 
+                    Viele Lichtjahre weiter und ohne Implantat sieht die Welt ganz anders aus: Klein, dreckig, gefährlich. Der fast-schon-neunjährige Adrian 
+                    lebt mit seinem Bruder und seinem Vater auf Astroid AG F2, einer unbedeutenden Mine, welche heute Punkt 14 Uhr in einer Explosion zerbersten wird. 
+                    Ein Dutzend Schiffe bringt die Menschen fort. Und Adrian erwischt das falsche. Während sein Bruder und seine Schwester die übleren Ecken des 
+                    Universums auf der Suche nach ihm durchkämmen, lernt Adrian das Leben auf einem Großkampfschiff des Militärs kennen, der Sleeping Beauty. 
+                    Dessen aufstrebende Kapitänin sieht ebenfalls eine Welt zerbrechen: die einem gesunden, demokratischen Staat zu dienen. Doch ein Ermittler 
+                    auf der Erde und ein Agent des Geheimdienstes lassen keinen Zweifel und dann ist da diese Kolonie, welche sich gegen den Willen des Senats 
+                    unabhängig nennt. Als die separatistische Kolonie zu den Waffen greift kann nur die Sleeping Beauty ein Blutbad verhindern. Mit an Bord ein 
+                    fast-schon-neunjähriger, blinder Passagier namens Adrian …
+                </p>
+
+                <p>
+                    "Sapiens 2252" kann <a href="https://archive.org/details/sapiens2252" download>im Interent Archive</a> als PDF und ePub heruntergeladen werden. 
+                    Ebenfalls kann er als Digital- und Print-on-Demand-Ausgabe über <a href="https://amzn.eu/d/5RbJ08D">Amazon</a> bezogen werden.
+                </p>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

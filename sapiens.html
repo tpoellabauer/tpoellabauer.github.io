@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unterseite</title>
 
     <style>
@@ -48,6 +49,54 @@
 
             .content a {
                 color: #00bfff; /* Lichtschwert-Blau */
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .banner {
+                height: 150px;
+                padding: 20px 0;
+            }
+            .banner img {
+                max-height: 120px;
+            }
+            nav {
+                margin-left: 5% !important;
+                margin-top: 5px !important;
+            }
+            .content {
+                padding: 20px !important;
+                max-width: 100%;
+            }
+            .content p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            div[style*="flex"] {
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+            img[src*="cover"] {
+                max-width: 100% !important;
+                max-height: 400px;
+            }
+        }
+        @media (max-width: 480px) {
+            .banner {
+                height: 120px;
+                padding: 15px 0;
+            }
+            .banner img {
+                max-height: 100px;
+            }
+            .content {
+                padding: 15px !important;
+            }
+            .content p {
+                font-size: 0.95rem;
             }
         }
     </style>

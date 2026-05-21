@@ -7,20 +7,28 @@
 
     <style>
         /* Grundlayout */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
+            padding: 0;
             font-family: Arial, Helvetica, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
 
             /* Endlos-Hintergrund */
-            background-image: url("StarField.jpg"); /* Pfad anpassen */
+            background-image: url("StarField.jpg");
             background-repeat: repeat;
             background-position: top left;
+            background-attachment: fixed;
         }
 
         /* Banner oben */
         .banner {
             height: 220px;
-            background-color: rgb(0, 0, 0); /* alternativ: background-image */
+            background-color: rgb(0, 0, 0);
             color: white;
 
             display: flex;
@@ -29,6 +37,12 @@
 
             font-size: 2.5rem;
             letter-spacing: 1px;
+        }
+
+        .banner a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Content-Bereich */
@@ -45,58 +59,119 @@
             line-height: 1.6;
             font-size: 1.1rem;
             color: white;
-            }
-
-            .content a {
-                color: #00bfff; /* Lichtschwert-Blau */
-            }
+            margin: 0 0 1.5rem 0;
         }
+
+        .content a {
+            color: #00bfff;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .content a:hover {
+            color: #ffffff;
+        }
+
+        /* Navigation */
+        nav {
+            text-align: left;
+            margin-top: 10px;
+            margin-left: 1%;
+        }
+
+        nav a {
+            display: inline-block;
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: underline;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        nav a:active {
+            background-color: rgba(0, 191, 255, 0.2);
+        }
+
+        /* Tablet: 768px and below */
         @media (max-width: 768px) {
             body {
                 margin: 0;
                 padding: 0;
             }
+
             .banner {
                 height: 150px;
                 padding: 20px 0;
             }
+
             .banner img {
                 max-height: 120px;
+                width: auto;
             }
+
             nav {
-                margin-left: 5% !important;
-                margin-top: 5px !important;
+                margin-left: 5%;
+                margin-top: 5px;
+                padding: 0 5%;
             }
+
+            nav a {
+                font-size: 1rem;
+                padding: 10px 12px;
+            }
+
             .content {
-                padding: 20px !important;
+                padding: 20px;
                 max-width: 100%;
             }
+
             .content p {
                 font-size: 1rem;
                 line-height: 1.5;
             }
-            div[style*="flex"] {
+
+            .content > div[style*="flex"] {
                 flex-direction: column !important;
                 gap: 20px !important;
             }
+
             img[src*="cover"] {
                 max-width: 100% !important;
                 max-height: 400px;
             }
         }
+
+        /* Mobile: 480px and below */
         @media (max-width: 480px) {
             .banner {
                 height: 120px;
                 padding: 15px 0;
             }
+
             .banner img {
                 max-height: 100px;
+                width: auto;
             }
+
             .content {
-                padding: 15px !important;
+                padding: 15px;
             }
+
             .content p {
                 font-size: 0.95rem;
+                line-height: 1.5;
+                margin: 0 0 1rem 0;
+            }
+
+            nav {
+                margin-left: 0;
+                padding: 0 15px;
+            }
+
+            nav a {
+                font-size: 0.95rem;
+                padding: 10px 8px;
             }
         }
     </style>
@@ -105,20 +180,18 @@
 <body>
 
     <header class="banner">
-        <a href="#top" style="display: inline-block;">
-            <img src="logo.png" alt="Logo" style="height: 180px;">
+        <a href="#top">
+            <img src="logo.png" alt="Sapiens 2252 Logo" style="height: 180px; width: auto;">
         </a>
     </header>
-    <nav style="text-align: left; margin-top: 10px; margin-left: 1%;">
-        <a href="index.html" style="color: white; font-size: 1.2rem; text-decoration: underline;">
-            Zurück zur Hauptseite
-        </a>
+    <nav>
+        <a href="index.html">Zurück zur Hauptseite</a>
     </nav>
 
     <main class="content">
         <div style="display: flex; gap: 40px; align-items: flex-start;">
             <div style="flex: 1; min-width: 220px;">
-                <img src="cover.jpg" alt="Cover" style="width: 100%; max-width: 300px; height: auto; display: block; border-radius: 8px;">
+                <img src="cover.jpg" alt="Sapiens 2252 Cover" style="width: 100%; max-width: 300px; height: auto; display: block; border-radius: 8px;">
             </div>
             <div style="flex: 2;">
                 <p>
@@ -135,7 +208,7 @@
                 </p>
 
                 <p>
-                    "Sapiens 2252" kann <a href="https://archive.org/details/sapiens_2252" download>im Interent Archive</a> als PDF und ePub heruntergeladen werden. 
+                    "Sapiens 2252" kann <a href="https://archive.org/details/sapiens_2252" download>im Internet Archive</a> als PDF und ePub heruntergeladen werden. 
                     Ebenfalls kann er als Digital- und Print-on-Demand-Ausgabe über <a href="https://amzn.eu/d/5RbJ08D">Amazon</a> bezogen werden.
                 </p>
             </div>

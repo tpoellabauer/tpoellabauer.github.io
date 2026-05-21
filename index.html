@@ -26,10 +26,11 @@
             100% { opacity: 1; }
         }
         body {
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(6, 10, 10, 0.96);
             color: #00ffcc;
             font-family: "Courier New", monospace;
-            text-shadow: 0 0 1px #00ffcc, 0 0 6px #00ffcc;
+            text-shadow: 0 0 1px rgba(0,255,204,0.6),
+             0 0 3px rgba(0,255,204,0.35);
             margin: 0;
             padding: 20px;
             position: relative;
@@ -47,15 +48,14 @@
             z-index: 1;
         }
         .node {
-            fill: rgba(0, 255, 204, 1.0);
+            fill: rgba(0, 255, 204, 0.75);
         }
         .node-background {
             fill: rgba(0, 0, 0, 1.0);
         }
         .line {
-            stroke: rgba(0, 255, 204, 0.2);
-            stroke-width: 4;
-            stroke-dasharray: 100%;
+            stroke: rgba(0, 255, 204, 0.12);
+            stroke-width: 2;
         }
         .container {
             display: flex;
@@ -66,7 +66,7 @@
             border: 1px solid #00ffcc;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px #00ffcc;
+            box-shadow: 0 0 8px rgba(0,255,204,0.25);
             position: relative;
             overflow: auto;
             visibility: hidden;
@@ -227,8 +227,12 @@
                     <svg width="100%" height="100%">
                         <defs>
                             <filter id="crtFilter">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur"/>
-                                <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 -5" result="crtEffect"/>
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="blur"/>
+                                <feColorMatrix in="blur" type="matrix" values="
+                                    1 0 0 0 0
+                                    0 1 0 0 0
+                                    0 0 1 0 0
+                                    0 0 0 4 -2" result="crtEffect"/>
                                 <feBlend in="SourceGraphic" in2="crtEffect" mode="screen"/>
                             </filter>
                         </defs>
@@ -447,7 +451,7 @@
         function activateSignalLines() {
             const lines = document.querySelectorAll('.line');
             lines.forEach(line => {
-                line.style.animation = `lineHighlight 2s infinite`;
+                line.style.animation = `lineHighlight 5s infinite ease-in-out`;
                 line.style.animationDelay = `${Math.random() * 3}s`;
             });
         }
@@ -455,10 +459,7 @@
         function revealContent() {
             const container = document.querySelector('.container');
             container.style.visibility = 'visible';
-            const textElements = container.querySelectorAll('*');
-            textElements.forEach((element, index) => {
-                element.style.animation = `typewriter 3.5s steps(${element.textContent.length}) ${index * 0.025}s forwards`;
-            });
+            container.style.opacity = '1';
         }
 
         function toggleImpressum() {

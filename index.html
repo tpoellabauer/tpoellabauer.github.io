@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thomas Pöllabauer</title>
+    <title>Thomas Pöllabauer-Berkei</title>
     <style>
         @keyframes nodeHighlight {
             0%, 100% { fill: rgba(0, 255, 204, 0.7); }
@@ -26,10 +26,11 @@
             100% { opacity: 1; }
         }
         body {
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(6, 10, 10, 0.96);
             color: #00ffcc;
             font-family: "Courier New", monospace;
-            text-shadow: 0 0 1px #00ffcc, 0 0 6px #00ffcc;
+            text-shadow: 0 0 1px rgba(0,255,204,0.6),
+             0 0 3px rgba(0,255,204,0.35);
             margin: 0;
             padding: 20px;
             position: relative;
@@ -47,15 +48,14 @@
             z-index: 1;
         }
         .node {
-            fill: rgba(0, 255, 204, 1.0);
+            fill: rgba(0, 255, 204, 0.75);
         }
         .node-background {
             fill: rgba(0, 0, 0, 1.0);
         }
         .line {
-            stroke: rgba(0, 255, 204, 0.2);
-            stroke-width: 4;
-            stroke-dasharray: 100%;
+            stroke: rgba(0, 255, 204, 0.12);
+            stroke-width: 2;
         }
         .container {
             display: flex;
@@ -66,7 +66,7 @@
             border: 1px solid #00ffcc;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px #00ffcc;
+            box-shadow: 0 0 8px rgba(0,255,204,0.25);
             position: relative;
             overflow: auto;
             visibility: hidden;
@@ -206,8 +206,8 @@
         <div class="container">
         <div class="content">
             <div class="left">
-                <h1>Thomas Pöllabauer</h1>
-                <p>Technical Lead | Computer Vision Scientist</p>
+                <h1>Thomas Pöllabauer-Berkei</h1>
+                <p>Technical Lead | Applied AI & Computer Vision</p>
                 <div class="crt-line"></div>
                 <h2>Contents</h2>
                 <div class="toc">
@@ -217,7 +217,7 @@
                         <li><a href="#education">Education</a></li>
                         <li><a href="#skills">Skills</a></li>
                         <li><a href="#links">Links and Resources</a></li>
-                        <li><a href="#writing">Creative Writing</a></li>
+                        <li><a href="#projects">Personal Projects</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
@@ -227,8 +227,12 @@
                     <svg width="100%" height="100%">
                         <defs>
                             <filter id="crtFilter">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur"/>
-                                <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 -5" result="crtEffect"/>
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="blur"/>
+                                <feColorMatrix in="blur" type="matrix" values="
+                                    1 0 0 0 0
+                                    0 1 0 0 0
+                                    0 0 1 0 0
+                                    0 0 0 4 -2" result="crtEffect"/>
                                 <feBlend in="SourceGraphic" in2="crtEffect" mode="screen"/>
                             </filter>
                         </defs>
@@ -237,27 +241,45 @@
                         </g>
                     </svg>
                 </div>
-                <h2 id="about">About Me</h2>
-                <p>A computer vision enthusiast with a longstanding passion for computer science, nurtured since high school. Interests evolved from microcontrollers and embedded systems to computer graphics, and ultimately to computer vision and machine learning. Passionate about translating research from the lab into practical applications that improve the way we work and live. Over six years of experience at the intersection of research and industry contributing to and leading industry and applied research projects.</p>
+                <h2 id="about">Profile</h2>
+                <p> Technical Lead and AI specialist with expertise in Computer Vision,
+                    Machine Learning, and cloud-native AI infrastructure. Experienced in
+                    leading industrial AI projects from research and prototyping to scalable
+                    deployment in production environments. Strong background in applied
+                    research, software architecture, MLOps, and technical leadership with
+                    experience across manufacturing, AR/VR, and infrastructure domains.</p>
+                <h2>Core Competencies</h2>
+                <p>
+                Machine Learning • Computer Vision • MLOps • Kubernetes • Cloud-Native AI •
+                Technical Leadership • Industrial AI • Synthetic Data • CI/CD • Applied Research •
+                Software Architecture • Distributed Systems
+                </p>
+                <div class="crt-line"></div>
                 <h2 id="experience">Experience</h2>
                 <p><strong>Technical Lead Predictive Maintenance and AI</strong> <br> 
                     PROFI Engineering Systems AG<br> 
                     (2025 - currently)</p>
-                <p>&bull; Technical Lead of Software Development</p>
-                <p>&bull; Architecture Design</p>
-                <p>&bull; AI Domain Expert</p>
+                    <p>&bull; Leading software and AI development for industrial predictive maintenance solutions.</p>
+                    <p>&bull; Designing scalable system architectures for cloud-native and AI-driven applications.</p>
+                    <p>&bull; Acting as domain expert for Machine Learning, Computer Vision, and applied AI systems.</p>
+                    <p>&bull; Driving technical strategy, infrastructure decisions, and development workflows.</p>
+                    <p>&bull; Leading infrastructure and deployment initiatives based on Kubernetes and OpenShift technologies.</p>
                 <p><strong>Research Scientist Computer Vision and Machine Learning</strong> <br> 
                     Fraunhofer Institute for Computer Graphics Research IGD <br> 
                     (2020 - 2024)</p>
-                <p>&bull; Design and Application of State-of-the-Art Computer Vision Algoritms in Object Detection and Localication, Segmentation, Classification</p>
-                <p>&bull; Synthetic Data Generation for Machine Learning</p>
-                <p>&bull; Automated Quality Control</p>
-                <p>&bull; 3D Scene Reconstruction</p>
+                    <p>&bull; Conducted applied research and industrial technology transfer in Computer Vision and Machine Learning.</p>
+                    <p>&bull; Designed and implemented state-of-the-art solutions for object detection, pose estimation, segmentation, and classification.</p>
+                    <p>&bull; Led and contributed to industry collaborations in manufacturing, robotics, AR/VR, automotive, and infrastructure domains.</p>
+                    <p>&bull; Developed synthetic data generation pipelines and domain adaptation approaches for robust AI systems.</p>
+                    <p>&bull; Built scalable training and inference infrastructures for real-world industrial deployment.</p>
+                    <p>&bull; Supervised student research projects and contributed to academic teaching activities.</p>
+                    <p>&bull; Published peer-reviewed research in Computer Vision, Machine Learning, and 3D Vision.</p>
                 <p><strong>Research Assistant</strong> <br> 
                     Fraunhofer Institute for Computer Graphics Research IGD <br> 
                     (2018 - 2020)</p>
-                <p>&bull; Continous Integration and Testing</p>
-                <p>&bull; Optimization</p>
+                    <p>&bull; Supported research and development projects in Computer Vision and Visual Computing.</p>
+                    <p>&bull; Worked on optimization, automation, and continuous integration workflows.</p>
+                    <p>&bull; Assisted in the development of experimental software prototypes and evaluation pipelines.</p>
                 <div class="crt-line"></div>
                 <h2 id="education">Education</h2>
                 <p><strong>Doctor of Engineering in Computer Science and AI</strong> <br> 
@@ -268,19 +290,45 @@
                     Technical University of Berlin <br> (2013 - 2017)</p>
                 <div class="crt-line"></div>
                 <h2 id="skills">Skills</h2>
-                <p>&bull; <strong>Specialization</strong> <br>
-                    Machine Learning for Computer Vision Tasks such as 2D (object) detection, 3 and 6 degrees-of-freedom (object) pose estimation, 
-                    classification, semantic segmentation, 3D scene reconstruction, zero- and few-shot methods, generative models 
-                    (Autoencoders, GANs, Diffusion Models; Machine Learning under constraints such as limited data or limited 
-                    computational resources.</p>
-                <p>&bull; <strong>Technical</strong> <br>
-                    Python for Machine Learning and Artificial Intelligence (PyTorch, TensorFlow, Keras, NumPy, Scikit‑learn, Pandas, etc.); 
-                    C/C++; Java; HTML/CSS; SQL; Git; Continous Integration; Linux; Shell (Bash/Zsh); Docker; SLURM; LaTeX; 
-                    Microsoft Office solutions.</p>
-                <p>&bull; <strong>Non-Technical</strong><br>
-                    English (professional proficiency); project management; team player; research design; scientific and technical writing; 
-                    process documentation; presentation of project and research results at conferences, fairs, and similar venues; 
-                    customer contact.</p>
+                <p>
+                    &bull; <strong>Expertise</strong><br>
+                    Computer Vision, Machine Learning, Deep Learning, Industrial AI, Synthetic Data Generation, 
+                    2D Object Detection, 6D Pose Estimation, Semantic Segmentation, Classification, 
+                    3D Scene Reconstruction, Neural Rendering, Generative AI, Domain Adaptation, 
+                    Few-/Zero-Shot Learning, Edge AI, High-Performance Computing (HPC), 
+                    MLOps, Cloud-Native AI Infrastructure.
+                </p>
+                <p>
+                    &bull; <strong>Programming & Technologies</strong><br>
+                    Python, C/C++, Java, SQL, HTML/CSS, Bash/Zsh, Linux, Git, Docker, 
+                    Kubernetes (K8s), OpenShift, SLURM, CI/CD, PyTorch, TensorFlow, Keras, 
+                    NumPy, Scikit-learn, Pandas, OpenCV, LaTeX.
+
+                </p>
+                <p>
+                    &bull; <strong>Infrastructure & DevOps</strong><br>
+                    Experience with cloud-native infrastructure, container orchestration,
+                    GitOps workflows, automated deployment pipelines, and scalable AI infrastructure.
+                    Operating and maintaining a private Kubernetes homelab cluster for testing,
+                    experimentation, infrastructure development, and self-hosted services.
+                </p>
+                <p>
+                    &bull; <strong>Research & Leadership</strong><br>
+                    Technical Leadership, Software Architecture, Applied Research, 
+                    Scientific Writing, Research Supervision, Project Management, 
+                    Customer Collaboration, Technical Presentations, Technology Transfer, 
+                    Cross-Functional Teamwork.
+                </p>
+                <p>
+                    &bull; <strong>Languages</strong><br>
+                    German (native), English (professional proficiency).
+                </p>
+                <div class="crt-line"></div>
+                <h2 id="achievements">Selected Achievements</h2>
+                <p>&bull; Magna Cum Laude PhD in Computer Science and AI.</p>
+                <p>&bull; Published 20+ peer-reviewed papers in Computer Vision and Machine Learning.</p>
+                <p>&bull; Awarded best project at the BMW-Fraunhofer Innovation Program.</p>
+                <p>&bull; Built scalable AI systems spanning research prototypes to production-ready deployments.</p>
                 <div class="crt-line"></div>
                 <h2 id="links">Links and Resources</h2>
                 <div id="links">
@@ -294,9 +342,20 @@
                         If you want to connect on Linkedin, you can find me
                         <a href="https://www.linkedin.com/in/tpoellabauer/">here</a>. </p>
                 </div>
+                <!-- <div class="crt-line"></div>
+                <h2 id="cv">Curriculum Vitae</h2>
+                <p>
+                    A detailed overview of my professional experience, research activities,
+                    publications, and technical expertise is available in my CV.
+                </p>
+                <p>
+                    <a href="Thomas_Poellabauer_CV.pdf" download>
+                        Download CV (PDF)
+                    </a>
+                </p> -->
                 <div class="crt-line"></div>
-                <h2 id="links">Creative Writing</h2>
-                <div id="writing">
+                <h2 id="links">Personal Projects</h2>
+                <div id="projects">
                     <p>One of my hobbies is creative writing. Although I struggle with considering a work finished, you can find one of my novels <a href="sapiens.html">here</a>.
                 </p>
                 </div>
@@ -393,7 +452,7 @@
         function activateSignalLines() {
             const lines = document.querySelectorAll('.line');
             lines.forEach(line => {
-                line.style.animation = `lineHighlight 2s infinite`;
+                line.style.animation = `lineHighlight 5s infinite ease-in-out`;
                 line.style.animationDelay = `${Math.random() * 3}s`;
             });
         }
@@ -401,10 +460,7 @@
         function revealContent() {
             const container = document.querySelector('.container');
             container.style.visibility = 'visible';
-            const textElements = container.querySelectorAll('*');
-            textElements.forEach((element, index) => {
-                element.style.animation = `typewriter 3.5s steps(${element.textContent.length}) ${index * 0.025}s forwards`;
-            });
+            container.style.opacity = '1';
         }
 
         function toggleImpressum() {

@@ -18,197 +18,209 @@
     <meta name="twitter:image" content="https://www.thomaspoellabauer.com/cover.jpg">
 
     <style>
-        /* Grundlayout */
-        * {
-            box-sizing: border-box;
+        :root {
+            --amber:      #ffb347;
+            --amber-alt:  #ff8c42;
+            --amber-line: rgba(255, 179, 71, 0.26);
+            --ink:        #1a0d02;
+            --radius:     6px;
+            --rail:       195px;
+            --gap:        5px;
+            --ease:       0.2s ease;
         }
-
+        html { scroll-behavior: smooth; }
+        @keyframes fadeIn {
+            0%   { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        * { box-sizing: border-box; }
         body {
             margin: 0;
-            padding: 0;
-            font-family: Arial, Helvetica, sans-serif;
+            padding: 22px 18px 60px;
+            color: #f2e4d2;
+            font-family: Georgia, "Times New Roman", serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-
-            /* Endlos-Hintergrund */
+            background-color: #06080d;
             background-image: url("StarField.jpg");
             background-repeat: repeat;
             background-position: top left;
             background-attachment: fixed;
         }
-
-        /* Banner oben */
-        .banner {
-            height: 220px;
-            background-color: rgb(0, 0, 0);
-            color: white;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-size: 2.5rem;
-            letter-spacing: 1px;
+        .container {
+            max-width: 980px;
+            margin: auto;
+            background: rgba(4, 6, 10, 0.78);
+            border: 1px solid var(--amber-line);
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 0 24px rgba(255, 179, 71, 0.12);
+            animation: fadeIn 1s ease forwards;
         }
-
-        .banner h1 {
-            margin: 0;
-            font-size: inherit;
-            font-weight: normal;
-            line-height: 1;
-            display: flex;
+        .container a {
+            color: var(--amber);
+            text-decoration: none;
+            border-bottom: 1px solid var(--amber-line);
+            transition: color var(--ease), border-color var(--ease);
         }
-
-        .banner a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        .container a:hover {
+            color: #fff3e0;
+            border-color: var(--amber);
         }
-
-        /* Content-Bereich */
         .content {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px;
-
-            /* Kontrast zum Hintergrund */
-            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
         }
-
-        .content p {
-            line-height: 1.6;
-            font-size: 1.1rem;
-            color: white;
-            margin: 0 0 1.5rem 0;
+        /* ---------- rail navigation ---------- */
+        .left {
+            flex: 0 0 var(--rail);
+            position: sticky;
+            top: 22px;
         }
-
-        .content h2 {
-            color: white;
-            font-size: 1.6rem;
-            margin: 2.5rem 0 1rem 0;
+        .left h1 {
+            margin: 0 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--amber-line);
+            font-family: "Courier New", monospace;
+            font-size: 1.3rem;
+            line-height: 1.3;
+            letter-spacing: 0.04em;
+            color: var(--amber);
         }
-
-        .content a {
-            color: #00bfff;
-            text-decoration: underline;
-            transition: color 0.2s ease;
+        .tagline {
+            margin: 0 0 18px;
+            font-family: "Courier New", monospace;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: rgba(255, 179, 71, 0.65);
         }
-
-        .content a:hover {
-            color: #ffffff;
+        .toc {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
         }
-
-        /* Navigation */
-        nav {
-            text-align: left;
-            margin-top: 10px;
-            margin-left: 1%;
+        .nav-block {
+            display: block;
+            padding: 7px 12px;
+            background: var(--amber);
+            color: var(--ink) !important;
+            border: none !important;
+            font-family: "Courier New", monospace;
+            text-align: right;
+            text-decoration: none;
+            font-size: 0.82rem;
+            border-radius: var(--radius);
+            opacity: 0.62;
+            transition: opacity var(--ease), box-shadow var(--ease), transform var(--ease);
         }
-
-        nav a {
-            display: inline-block;
-            color: white;
-            font-size: 1.2rem;
-            text-decoration: underline;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
+        .nav-block:nth-of-type(even) { background: var(--amber-alt); }
+        .nav-block:hover,
+        .nav-block:focus {
+            opacity: 1;
+            box-shadow: 0 0 14px rgba(255, 179, 71, 0.45);
+            transform: translateX(-3px);
+            outline: none;
         }
-
-        nav a:active {
-            background-color: rgba(0, 191, 255, 0.2);
+        /* ---------- content column ---------- */
+        .right {
+            flex: 1 1 auto;
+            min-width: 0;
         }
-
-        /* Tablet: 768px and below */
+        .banner {
+            width: 100%;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--amber-line);
+            display: flex;
+            justify-content: center;
+        }
+        .banner img {
+            max-height: 150px;
+            width: auto;
+            max-width: 100%;
+        }
+        h2 {
+            background: var(--amber);
+            color: var(--ink);
+            font-family: "Courier New", monospace;
+            margin: 32px 0 12px;
+            padding: 7px 12px;
+            border-radius: var(--radius);
+            box-shadow: 0 0 14px rgba(255, 179, 71, 0.22);
+            font-size: 1.05rem;
+            letter-spacing: 0.04em;
+            scroll-margin-top: 22px;
+        }
+        p {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 12px 0;
+            max-width: 70ch;
+        }
+        .lead { font-size: 1.05rem; }
+        .blurb {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+        }
+        .blurb .cover { flex: 0 0 250px; }
+        .blurb .cover img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            border: 1px solid var(--amber-line);
+            box-shadow: 0 0 22px rgba(0, 0, 0, 0.7);
+        }
+        .blurb .text { flex: 1 1 auto; min-width: 0; }
+        #leseprobe p:first-of-type::first-letter {
+            float: left;
+            font-size: 3.1rem;
+            line-height: 0.85;
+            padding: 4px 8px 0 0;
+            color: var(--amber);
+        }
+        section[id] { scroll-margin-top: 22px; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .container { animation: none; }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+        }
+        /* ---------- narrow screens: rail folds into a top strip ---------- */
         @media (max-width: 768px) {
-            body {
-                margin: 0;
-                padding: 0;
+            body { padding: 12px 10px 40px; }
+            .container { padding: 16px; }
+            .content { flex-direction: column; gap: 20px; }
+            .left {
+                position: static;
+                flex: none;
+                width: 100%;
             }
-
-            .banner {
-                height: 150px;
-                padding: 20px 0;
+            .left h1 { font-size: 1.15rem; }
+            .toc { flex-direction: row; flex-wrap: wrap; }
+            .nav-block {
+                flex: 1 1 calc(33.333% - var(--gap));
+                text-align: center;
+                font-size: 0.75rem;
+                opacity: 0.78;
             }
-
-            .banner img {
-                max-height: 120px;
-                width: auto;
-            }
-
-            nav {
-                margin-left: 5%;
-                margin-top: 5px;
-                padding: 0 5%;
-            }
-
-            nav a {
-                font-size: 1rem;
-                padding: 10px 12px;
-            }
-
-            .content {
-                padding: 20px;
-                max-width: 100%;
-            }
-
-            .content p {
-                font-size: 1rem;
-                line-height: 1.5;
-            }
-
-            .content h2 {
-                font-size: 1.4rem;
-                margin: 2rem 0 0.8rem 0;
-            }
-
-            .content > div[style*="flex"] {
-                flex-direction: column !important;
-                gap: 20px !important;
-            }
-
-            img[src*="cover"] {
-                max-width: 100% !important;
-                max-height: 400px;
-            }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+            .banner { margin-bottom: 18px; }
+            .banner img { max-height: 110px; }
+            h2 { font-size: 0.95rem; margin: 26px 0 10px; }
+            .blurb { flex-direction: column; gap: 18px; }
+            .blurb .cover { flex: none; max-width: 320px; margin: 0 auto; }
         }
-
-        /* Mobile: 480px and below */
         @media (max-width: 480px) {
-            .banner {
-                height: 120px;
-                padding: 15px 0;
-            }
-
-            .banner img {
-                max-height: 100px;
-                width: auto;
-            }
-
-            .content {
-                padding: 15px;
-            }
-
-            .content p {
-                font-size: 0.95rem;
-                line-height: 1.5;
-                margin: 0 0 1rem 0;
-            }
-
-            .content h2 {
-                font-size: 1.25rem;
-                margin: 1.5rem 0 0.7rem 0;
-            }
-
-            nav {
-                margin-left: 0;
-                padding: 0 15px;
-            }
-
-            nav a {
-                font-size: 0.95rem;
-                padding: 10px 8px;
-            }
+            body { padding: 8px 6px 32px; }
+            .container { padding: 12px; border-radius: 8px; }
+            .nav-block { flex: 1 1 calc(50% - var(--gap)); }
+            .banner img { max-height: 90px; }
+            .left h1 { font-size: 1.05rem; }
+            h2 { font-size: 0.9rem; }
+            p { font-size: 0.95rem; line-height: 1.6; }
+            #leseprobe p:first-of-type::first-letter { font-size: 2.6rem; }
         }
     </style>
 
@@ -246,73 +258,82 @@
 </head>
 
 <body>
-
-    <header class="banner">
-        <h1>
-            <a href="#top">
-                <img src="logo.png" alt="Sapiens 2252" style="height: 180px; width: auto;">
-            </a>
-        </h1>
-    </header>
-    <nav>
-        <a href="index.html">Zurück zur Hauptseite</a>
-    </nav>
-
-    <main class="content">
-        <div style="display: flex; gap: 40px; align-items: flex-start;">
-            <div style="flex: 1; min-width: 220px;">
-                <img src="cover.jpg" alt="Sapiens 2252 Cover" style="width: 100%; max-width: 300px; height: auto; display: block; border-radius: 8px;">
+    <div class="container">
+        <div class="content">
+            <div class="left">
+                <h1>Sapiens 2252</h1>
+                <p class="tagline">Science-Fiction-Roman<br>von Sid Vappavuori</p>
+                <nav class="toc">
+                    <a class="nav-block" href="#klappentext">Klappentext</a>
+                    <a class="nav-block" href="#leseprobe">Leseprobe</a>
+                    <a class="nav-block" href="#download">Download</a>
+                    <a class="nav-block" href="index.html">Hauptseite</a>
+                </nav>
             </div>
-            <div style="flex: 2;">
-                <p>
-                    2252. Schätzungen zufolge ist heute jeder Quadratmeter der Erdoberfläche eintausend Mal größer, als noch zum Beginn des Milleniums. 
-                    Neuralimplantate, kleine Computer im Hirn, machen es möglich. Sie machen die Erde größer, den Körper ewig jung und den Spaß riesengroß. 
-                    Viele Lichtjahre weiter und ohne Implantat sieht die Welt ganz anders aus: Klein, dreckig, gefährlich. Der fast-schon-neunjährige Adrian 
-                    lebt mit seinem Bruder und seinem Vater auf Astroid AG F2, einer unbedeutenden Mine, welche heute Punkt 14 Uhr in einer Explosion zerbersten wird. 
-                    Ein Dutzend Schiffe bringt die Menschen fort. Und Adrian erwischt das falsche. Während sein Bruder und seine Schwester die übleren Ecken des 
-                    Universums auf der Suche nach ihm durchkämmen, lernt Adrian das Leben auf einem Großkampfschiff des Militärs kennen, der Sleeping Beauty. 
-                    Dessen aufstrebende Kapitänin sieht ebenfalls eine Welt zerbrechen: die einem gesunden, demokratischen Staat zu dienen. Doch ein Ermittler 
-                    auf der Erde und ein Agent des Geheimdienstes lassen keinen Zweifel und dann ist da diese Kolonie, welche sich gegen den Willen des Senats 
-                    unabhängig nennt. Als die separatistische Kolonie zu den Waffen greift kann nur die Sleeping Beauty ein Blutbad verhindern. Mit an Bord ein 
-                    fast-schon-neunjähriger, blinder Passagier namens Adrian …
-                </p>
+            <div class="right">
+                <div class="banner">
+                    <a href="#klappentext"><img src="logo.png" alt="Sapiens 2252"></a>
+                </div>
 
-                <p>
-                    "Sapiens 2252" kann <a href="https://archive.org/details/sapiens_2252" download>im Internet Archive</a> als PDF und ePub heruntergeladen werden. 
-                    Ebenfalls kann er als Digital- und Print-on-Demand-Ausgabe über <a href="https://amzn.eu/d/5RbJ08D">Amazon</a> bezogen werden.
-                </p>
+                <h2 id="klappentext">Klappentext</h2>
+                <div class="blurb">
+                    <div class="cover">
+                        <img src="cover.jpg" alt="Sapiens 2252 Cover">
+                    </div>
+                    <div class="text">
+                        <p class="lead">
+                            2252. Schätzungen zufolge ist heute jeder Quadratmeter der Erdoberfläche eintausend Mal größer, als noch zum Beginn des Milleniums.
+                            Neuralimplantate, kleine Computer im Hirn, machen es möglich. Sie machen die Erde größer, den Körper ewig jung und den Spaß riesengroß.
+                            Viele Lichtjahre weiter und ohne Implantat sieht die Welt ganz anders aus: Klein, dreckig, gefährlich.
+                        </p>
+                        <p>
+                            Der fast-schon-neunjährige Adrian lebt mit seinem Bruder und seinem Vater auf Astroid AG F2, einer unbedeutenden Mine, welche heute Punkt 14 Uhr
+                            in einer Explosion zerbersten wird. Ein Dutzend Schiffe bringt die Menschen fort. Und Adrian erwischt das falsche. Während sein Bruder und seine
+                            Schwester die übleren Ecken des Universums auf der Suche nach ihm durchkämmen, lernt Adrian das Leben auf einem Großkampfschiff des Militärs
+                            kennen, der Sleeping Beauty.
+                        </p>
+                        <p>
+                            Dessen aufstrebende Kapitänin sieht ebenfalls eine Welt zerbrechen: die einem gesunden, demokratischen Staat zu dienen. Doch ein Ermittler
+                            auf der Erde und ein Agent des Geheimdienstes lassen keinen Zweifel und dann ist da diese Kolonie, welche sich gegen den Willen des Senats
+                            unabhängig nennt. Als die separatistische Kolonie zu den Waffen greift kann nur die Sleeping Beauty ein Blutbad verhindern. Mit an Bord ein
+                            fast-schon-neunjähriger, blinder Passagier namens Adrian …
+                        </p>
+                    </div>
+                </div>
+
+                <section id="leseprobe">
+                    <h2>Leseprobe</h2>
+                    <p>
+                        Eisiger Wind pfiff durch tausend unsichtbare Spalten und schuf das schaurigste Konzert, ganz als säßen sie in einer gewaltigen Orgel und als sei der Organist auf bestem Wege sich in einen Nervenzusammenbruch zu spielen. Und dennoch genügte der beständige Luftzug bloß, um die Gelenke steif und schmerzend zu machen und das Gesicht zur eisigen Maske, nicht aber um den Gestank zu zerstreuen. Schimmel, Schweiß, Urin, Exkremente und Blut waren die dominierenden Düfte und es gab nur einen Grund, weshalb nicht schon lange Verwesungsgeruch hinzugekommen war. Es war diese verfluchte Saukälte.
+                    </p>
+                    <p>
+                        Noch ging immer mal wieder ein Schütteln durch seine Glieder. Doch auch das wurde immer seltener. Bitterlich frierend zog er seinen Mantel, die längst überwundene, letzte Barriere zwischen sich und der allgegenwärtigen Kälte, enger. Er war kein Typ, der wegen unveränderlicher Zu- und Umstände Szenen machte. Nicht nachdem seine Nase nichts mehr roch und seine Finger nichts mehr fühlten, seinem Magen das Knurren vergangen und sein eigentlich doch schwarzes Haar weiß geworden war. Weiß vom Frost.
+                    </p>
+                    <p>
+                        Das Schlimmste war aber was die Kälte mit dem Verstand anstellte. Was er Leute hat tun sehen, als es letztlich Knack gemacht hatte ... In etlichen Fällen hatte man der Kälte zuvorkommen müssen, um die Sicherheit des Schiffes zu gewährleisten. Selbsterhaltung ließ einen unangenehme Dinge tun ...
+                    </p>
+                    <p>
+                        Er würde nicht zu diesen Fällen zählen bei denen es Knack machte. Anstatt sich zu echauffieren tat er alles, um wach zu bleiben. Bereits am Steg, noch bevor er an Bord gegangen war, hatte man ihn gewarnt: Weit nicht alle, die auf ein solches Schiff stiegen, träten am Ende der Reise wieder davon herunter. Und jene, die einschliefen, waren die Ersten, die starben. Zusammen mit denen, welchen die Kälte das Hirn zersetzte. Bei denen es Knack machte.
+                    </p>
+                    <p>
+                        Sein Blick wanderte träge durch die Kammer. Jetzt war alles träge. Er fragte sich, ob nicht vielleicht die ganze Welt langsamer geworden war. Alle seine Sinne legten das nahe. Er hatte Schwierigkeiten zu fokussieren. Alles schien so unendlich langsam zu sein. Vielleicht war gar nicht er allein, sondern die ganze Welt in Trägheit verfallen? Gab es überhaupt, nun wo sich ihrer beider Temperatur stetig anglich, noch einen Unterschied zwischen ihm und dem übrigen Schiff? Es musste so sein. Die Welt war es, die langsamer geworden war. Ja.
+                    </p>
+                </section>
+
+                <section id="download">
+                    <h2>Lesen und Herunterladen</h2>
+                    <p>
+                        Der vollständige Roman steht im Internet Archive als
+                        <a href="https://archive.org/details/sapiens_2252" download>PDF und ePub zum kostenlosen Download</a>
+                        sowie als <a href="https://archive.org/stream/sapiens_2252/Sapiens2252_2025_djvu.txt">Volltext zum Online-Lesen</a> bereit.
+                    </p>
+                    <p>
+                        Ebenfalls kann er als Digital- und Print-on-Demand-Ausgabe über
+                        <a href="https://amzn.eu/d/5RbJ08D">Amazon</a> bezogen werden.
+                    </p>
+                </section>
             </div>
         </div>
-
-        <section id="leseprobe">
-            <h2>Leseprobe</h2>
-
-            <p>
-                Eisiger Wind pfiff durch tausend unsichtbare Spalten und schuf das schaurigste Konzert, ganz als säßen sie in einer gewaltigen Orgel und als sei der Organist auf bestem Wege sich in einen Nervenzusammenbruch zu spielen. Und dennoch genügte der beständige Luftzug bloß, um die Gelenke steif und schmerzend zu machen und das Gesicht zur eisigen Maske, nicht aber um den Gestank zu zerstreuen. Schimmel, Schweiß, Urin, Exkremente und Blut waren die dominierenden Düfte und es gab nur einen Grund, weshalb nicht schon lange Verwesungsgeruch hinzugekommen war. Es war diese verfluchte Saukälte.
-            </p>
-
-            <p>
-                Noch ging immer mal wieder ein Schütteln durch seine Glieder. Doch auch das wurde immer seltener. Bitterlich frierend zog er seinen Mantel, die längst überwundene, letzte Barriere zwischen sich und der allgegenwärtigen Kälte, enger. Er war kein Typ, der wegen unveränderlicher Zu- und Umstände Szenen machte. Nicht nachdem seine Nase nichts mehr roch und seine Finger nichts mehr fühlten, seinem Magen das Knurren vergangen und sein eigentlich doch schwarzes Haar weiß geworden war. Weiß vom Frost.
-            </p>
-
-            <p>
-                Das Schlimmste war aber was die Kälte mit dem Verstand anstellte. Was er Leute hat tun sehen, als es letztlich Knack gemacht hatte ... In etlichen Fällen hatte man der Kälte zuvorkommen müssen, um die Sicherheit des Schiffes zu gewährleisten. Selbsterhaltung ließ einen unangenehme Dinge tun ...
-            </p>
-
-            <p>
-                Er würde nicht zu diesen Fällen zählen bei denen es Knack machte. Anstatt sich zu echauffieren tat er alles, um wach zu bleiben. Bereits am Steg, noch bevor er an Bord gegangen war, hatte man ihn gewarnt: Weit nicht alle, die auf ein solches Schiff stiegen, träten am Ende der Reise wieder davon herunter. Und jene, die einschliefen, waren die Ersten, die starben. Zusammen mit denen, welchen die Kälte das Hirn zersetzte. Bei denen es Knack machte.
-            </p>
-
-            <p>
-                Sein Blick wanderte träge durch die Kammer. Jetzt war alles träge. Er fragte sich, ob nicht vielleicht die ganze Welt langsamer geworden war. Alle seine Sinne legten das nahe. Er hatte Schwierigkeiten zu fokussieren. Alles schien so unendlich langsam zu sein. Vielleicht war gar nicht er allein, sondern die ganze Welt in Trägheit verfallen? Gab es überhaupt, nun wo sich ihrer beider Temperatur stetig anglich, noch einen Unterschied zwischen ihm und dem übrigen Schiff? Es musste so sein. Die Welt war es, die langsamer geworden war. Ja.
-            </p>
-            <p>
-                Weiterlesen: Der vollständige Roman steht im Internet Archive als
-                <a href="https://archive.org/details/sapiens_2252">PDF und ePub zum kostenlosen Download</a>
-                sowie als <a href="https://archive.org/stream/sapiens_2252/Sapiens2252_2025_djvu.txt">Volltext zum Online-Lesen</a> bereit.
-            </p>
-        </section>
-    </main>
-
+    </div>
 </body>
 </html>

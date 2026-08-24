@@ -14,13 +14,17 @@
     <meta property="og:url" content="https://www.thomaspoellabauer.com/">
     <meta property="og:locale" content="en_US">
     <style>
-        @keyframes nodeHighlight {
-            0%, 100% { fill: rgba(0, 255, 204, 0.7); }
-            50% { fill: rgba(0, 255, 204, 1); }
+        @keyframes nodeCore {
+            0%, 100% { fill: rgba(0, 255, 204, 0.55); }
+            50%      { fill: rgba(190, 255, 240, 1); }
         }
-        @keyframes lineHighlight {
-            0%, 100% { stroke: rgba(0, 255, 204, 0.2); }
-            50% { stroke: rgba(0, 255, 204, 1); }
+        @keyframes nodeHalo {
+            0%, 100% { stroke-opacity: 0.12; stroke-width: 0.8; }
+            50%      { stroke-opacity: 0.75; stroke-width: 2.6; }
+        }
+        @keyframes edgeFlicker {
+            0%, 100% { stroke-opacity: 0.09; }
+            50%      { stroke-opacity: 0.45; }
         }
         @keyframes crtRefresh {
             0% { clip-path: inset(0 0 100% 0); }
@@ -56,15 +60,33 @@
             animation: linescan 10s infinite linear;
             z-index: 1;
         }
-        .node {
+        .node-bg {
+            fill: rgba(0, 0, 0, 1);
+        }
+        .node-core {
             fill: rgba(0, 255, 204, 0.75);
+            animation: nodeCore 4.5s infinite ease-in-out;
         }
-        .node-background {
-            fill: rgba(0, 0, 0, 1.0);
+        .node-halo {
+            fill: none;
+            stroke: rgb(0, 255, 204);
+            stroke-opacity: 0.2;
+            stroke-width: 1;
+            animation: nodeHalo 4.5s infinite ease-in-out;
         }
-        .line {
-            stroke: rgba(0, 255, 204, 0.12);
-            stroke-width: 2;
+        .edge {
+            fill: none;
+            stroke: rgb(0, 255, 204);
+            stroke-opacity: 0.1;
+            stroke-width: 1.1;
+            stroke-linecap: round;
+            animation: edgeFlicker 7s infinite ease-in-out;
+        }
+        .pulse {
+            fill: rgb(200, 255, 245);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .node-core, .node-halo, .edge { animation: none; }
         }
         .container {
             display: flex;
@@ -167,7 +189,7 @@
                 font-size: 1.3rem;
             }
             .banner {
-                height: 120px;
+                height: 140px;
             }
             .toc {
                 display: grid;
@@ -200,7 +222,7 @@
                 font-size: 1rem;
             }
             .banner {
-                height: 80px;
+                height: 110px;
             }
             .toc {
                 grid-template-columns: 1fr;
@@ -233,7 +255,9 @@
             </div>
             <div class="right">
                 <div class="banner">
-                    <svg width="100%" height="100%">
+                    <svg id="nnSvg" width="100%" height="100%" viewBox="0 0 1000 300"
+                         preserveAspectRatio="xMidYMid meet" role="img"
+                         aria-label="Animated neural network graphic">
                         <defs>
                             <filter id="crtFilter">
                                 <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="blur"/>
@@ -244,9 +268,16 @@
                                     0 0 0 4 -2" result="crtEffect"/>
                                 <feBlend in="SourceGraphic" in2="crtEffect" mode="screen"/>
                             </filter>
+                            <filter id="pulseGlow" x="-200%" y="-200%" width="500%" height="500%">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="glow"/>
+                                <feMerge>
+                                    <feMergeNode in="glow"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
                         </defs>
                         <g id="neuralNetwork" class="neural-network" style="filter: url(#crtFilter);">
-                            <!-- Nodes will be created dynamically -->
+                            <!-- Nodes, edges and signal pulses are created dynamically -->
                         </g>
                     </svg>
                 </div>
@@ -389,83 +420,89 @@
         </div>
     </div>
     <script>
-        let useCurves = false;
-        const nodeData = [
-                { cx: '10%', cy: '20%' },
-                { cx: '10%', cy: '60%' },
-                { cx: '30%', cy: '50%' },
-                { cx: '50%', cy: '20%' },
-                { cx: '50%', cy: '60%' },
-                { cx: '70%', cy: '30%' },
-                { cx: '70%', cy: '80%' },
-                { cx: '90%', cy: '20%' },
-                { cx: '90%', cy: '40%' },
-                { cx: '90%', cy: '80%' }
-            ];
+        // Neural network banner: laid out in a fixed 1000x300 viewBox so it scales
+        // uniformly on every screen size instead of relying on percentage geometry.
+        (function buildNeuralNetwork() {
+            const NS = 'http://www.w3.org/2000/svg';
+            const WIDTH = 1000, HEIGHT = 300;
+            const LAYER_SIZES = [3, 5, 5, 4, 2];
+            const PULSE_CHANCE = 0.5;
 
-        function createNodes() {
-            const svg = document.querySelector('svg');
-            const neuralNetwork = document.getElementById('neuralNetwork');
-            
-            nodeData.forEach(data => {
-                const nodeBackground = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                nodeBackground.classList.add('node-background');
-                nodeBackground.setAttribute('cx', data.cx);
-                nodeBackground.setAttribute('cy', data.cy);
-                nodeBackground.setAttribute('r', '12');
-                neuralNetwork.appendChild(nodeBackground);
+            const group = document.getElementById('neuralNetwork');
+            if (!group) return;
 
-                const node = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                node.classList.add('node');
-                node.setAttribute('cx', data.cx);
-                node.setAttribute('cy', data.cy);
-                node.setAttribute('r', '12');
-                neuralNetwork.appendChild(node);
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const rand = (min, max) => min + Math.random() * (max - min);
+            const make = (tag, attrs) => {
+                const el = document.createElementNS(NS, tag);
+                for (const key in attrs) el.setAttribute(key, attrs[key]);
+                return el;
+            };
+
+            const layers = LAYER_SIZES.map((count, index) => {
+                const x = 70 + index * ((WIDTH - 140) / (LAYER_SIZES.length - 1));
+                const span = HEIGHT - 80;
+                return Array.from({ length: count }, (_, i) => ({
+                    x: x,
+                    y: count === 1 ? HEIGHT / 2 : 40 + span * (i / (count - 1))
+                }));
             });
-            neuralNetwork.filter = 'url(#crtFilter)';
-        }
 
-        function createSignalLines() {
-            const svg = document.querySelector('svg');
-            const layers = [
-                [nodeData[0], nodeData[1]],
-                [nodeData[2]],
-                [nodeData[3], nodeData[4]],
-                [nodeData[5], nodeData[6]],
-                [nodeData[7], nodeData[8], nodeData[9]]
-            ];
+            const edgeLayer = make('g', {});
+            const nodeLayer = make('g', {});
+            const pulseLayer = make('g', { filter: 'url(#pulseGlow)' });
+            group.appendChild(edgeLayer);
+            group.appendChild(nodeLayer);
+            group.appendChild(pulseLayer);
 
             for (let i = 0; i < layers.length - 1; i++) {
-                for (let j = 0; j < layers[i].length; j++) {
-                    for (let k = 0; k < layers[i + 1].length; k++) {
-                        const line = document.createElementNS('http://www.w3.org/2000/svg', useCurves ? 'path' : 'line');
-                        line.classList.add('line');
-                        const x1 = layers[i][j]['cx'];
-                        const y1 = layers[i][j]['cy'];
-                        const x2 = layers[i + 1][k]['cx'];
-                        const y2 = layers[i + 1][k]['cy'];
-                        if (useCurves) {
-                            const curve = `M${x1},${y1} C${x1},${(parseFloat(y1) + parseFloat(y2)) / 2} ${x2},${(parseFloat(y1) + parseFloat(y2)) / 2} ${x2},${y2}`;
-                            line.setAttribute('d', curve);
-                        } else {
-                            line.setAttribute('x1', x1);
-                            line.setAttribute('y1', y1);
-                            line.setAttribute('x2', x2);
-                            line.setAttribute('y2', y2);
-                        }
-                        svg.appendChild(line);
-                    }
-                }
-            }
-        }
+                layers[i].forEach(from => {
+                    layers[i + 1].forEach(to => {
+                        const bend = (to.x - from.x) * 0.5;
+                        const d = 'M' + from.x + ',' + from.y +
+                                  ' C' + (from.x + bend) + ',' + from.y +
+                                  ' ' + (to.x - bend) + ',' + to.y +
+                                  ' ' + to.x + ',' + to.y;
 
-        function activateSignalLines() {
-            const lines = document.querySelectorAll('.line');
-            lines.forEach(line => {
-                line.style.animation = `lineHighlight 5s infinite ease-in-out`;
-                line.style.animationDelay = `${Math.random() * 3}s`;
-            });
-        }
+                        const edge = make('path', { class: 'edge', d: d });
+                        if (!reducedMotion) {
+                            edge.style.animationDelay = rand(0, 7).toFixed(2) + 's';
+                        }
+                        edgeLayer.appendChild(edge);
+
+                        if (reducedMotion || Math.random() > PULSE_CHANCE) return;
+                        const pulse = make('circle', {
+                            class: 'pulse', cx: 0, cy: 0, r: rand(1.8, 3.2).toFixed(2)
+                        });
+                        pulse.appendChild(make('animateMotion', {
+                            path: d,
+                            dur: rand(2.6, 5.4).toFixed(2) + 's',
+                            begin: '-' + rand(0, 5).toFixed(2) + 's',
+                            repeatCount: 'indefinite',
+                            calcMode: 'spline',
+                            keyTimes: '0;1',
+                            keySplines: '0.45 0 0.55 1'
+                        }));
+                        pulseLayer.appendChild(pulse);
+                    });
+                });
+            }
+
+            layers.forEach(layer => layer.forEach(node => {
+                const delay = rand(0, 4.5).toFixed(2) + 's';
+                nodeLayer.appendChild(make('circle', {
+                    class: 'node-bg', cx: node.x, cy: node.y, r: 8
+                }));
+                const halo = make('circle', { class: 'node-halo', cx: node.x, cy: node.y, r: 11 });
+                const core = make('circle', { class: 'node-core', cx: node.x, cy: node.y, r: 5.5 });
+                if (!reducedMotion) {
+                    halo.style.animationDelay = delay;
+                    core.style.animationDelay = delay;
+                }
+                nodeLayer.appendChild(halo);
+                nodeLayer.appendChild(core);
+            }));
+        })();
 
         function revealContent() {
             const container = document.querySelector('.container');
@@ -482,9 +519,6 @@
             }
         }
 
-        createNodes();
-        createSignalLines();
-        activateSignalLines();
         revealContent();
     </script>
 </body>

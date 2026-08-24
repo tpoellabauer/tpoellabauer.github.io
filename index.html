@@ -14,6 +14,19 @@
     <meta property="og:url" content="https://www.thomaspoellabauer.com/">
     <meta property="og:locale" content="en_US">
     <style>
+        :root {
+            --neon:      #00ffcc;
+            --neon-alt:  #00d8ad;
+            --neon-line: rgba(0, 255, 204, 0.26);
+            --ink:       #04100d;
+            --radius:    6px;
+            --rail:      195px;
+            --gap:       5px;
+            --ease:      0.2s ease;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
         @keyframes nodeCore {
             0%, 100% { fill: rgba(0, 255, 204, 0.55); }
             50%      { fill: rgba(190, 255, 240, 1); }
@@ -30,39 +43,19 @@
             0%, 100% { stroke-opacity: 0.09; }
             50%      { stroke-opacity: 0.45; }
         }
-        @keyframes crtRefresh {
-            0% { clip-path: inset(0 0 100% 0); }
-            100% { clip-path: inset(0 0 0 0); }
-        }
-        @keyframes typewriter {
-            0% { visibility: hidden; }
-            100% { visibility: visible; }
-        }
         @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            0%   { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
+        * { box-sizing: border-box; }
         body {
             background-color: rgba(6, 10, 10, 0.96);
-            color: #00ffcc;
+            color: var(--neon);
             font-family: "Courier New", monospace;
-            text-shadow: 0 0 1px rgba(0,255,204,0.6),
-             0 0 3px rgba(0,255,204,0.35);
+            text-shadow: 0 0 1px rgba(0, 255, 204, 0.5),
+                         0 0 3px rgba(0, 255, 204, 0.28);
             margin: 0;
-            padding: 20px;
-            position: relative;
-            overflow: auto;
-        }
-        .linescan {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2%;
-            background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 204, 0.1) 50%);
-            background-size: 100% 2px;
-            animation: linescan 10s infinite linear;
-            z-index: 1;
+            padding: 22px 18px 60px;
         }
         .node-bg {
             fill: rgba(0, 0, 0, 1);
@@ -103,179 +96,180 @@
             stroke-width: 5;
             stroke-linecap: round;
         }
-        @media (prefers-reduced-motion: reduce) {
-            .node-core, .node-halo, .node-bloom, .edge { animation: none; }
-        }
         .container {
-            display: flex;
-            flex-direction: column;
-            max-width: 900px;
+            max-width: 980px;
             margin: auto;
             background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ffcc;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 8px rgba(0,255,204,0.25);
-            position: relative;
-            overflow: auto;
+            border: 1px solid var(--neon-line);
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 0 24px rgba(0, 255, 204, 0.12);
             visibility: hidden;
             opacity: 0;
-            animation: fadeIn 1.25s forwards;
+            animation: fadeIn 1s ease forwards;
         }
         .container a {
-            color: #00ffcc;
+            color: var(--neon);
+            text-decoration: none;
+            border-bottom: 1px solid var(--neon-line);
+            transition: color var(--ease), border-color var(--ease);
+        }
+        .container a:hover {
+            color: #d9fff6;
+            border-color: var(--neon);
         }
         .content {
             display: flex;
+            gap: 28px;
+            align-items: flex-start;
         }
+        /* ---------- rail navigation ---------- */
         .left {
-            flex: 1;
-            padding: 20px;
-            border-right: 1px solid #00ffcc;
-            max-width: 200px;
+            flex: 0 0 var(--rail);
+            position: sticky;
+            top: 22px;
         }
-        .right {
-            flex: 3;
-            padding: 20px;
-            text-align: justify;
+        .left h1 {
+            margin: 0 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--neon-line);
+            font-size: 1.3rem;
+            line-height: 1.3;
         }
-        h1 {
-            border-bottom: 1px solid #00ffcc;
-            padding-bottom: 5px;
+        .tagline {
+            margin: 0 0 18px;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: rgba(0, 255, 204, 0.6);
         }
-        h2 {
-            background: #00ffcc;
-            color: #04100d;
+        .toc {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+        }
+        .nav-block {
+            display: block;
+            padding: 7px 12px;
+            background: var(--neon);
+            color: var(--ink) !important;
+            border: none !important;
             text-shadow: none;
-            padding: 6px 10px;
-            border-radius: 3px;
-            box-shadow: 0 0 8px rgba(0, 255, 204, 0.35);
-        }
-        .crt-line {
-            width: 100%;
-            height: 2px;
-            background: #00ffcc;
-            margin: 10px 0;
-            opacity: 0.5;
-        }
-        .toc ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .toc li {
-            margin: 10px 0;
-        }
-        .toc a {
-            color: #00ffcc;
+            text-align: right;
             text-decoration: none;
+            font-size: 0.82rem;
+            border-radius: var(--radius);
+            opacity: 0.62;
+            transition: opacity var(--ease), box-shadow var(--ease), transform var(--ease);
+        }
+        .nav-block:nth-of-type(even) { background: var(--neon-alt); }
+        .nav-block:hover,
+        .nav-block:focus {
+            opacity: 1;
+            box-shadow: 0 0 14px rgba(0, 255, 204, 0.45);
+            transform: translateX(-3px);
+            outline: none;
+        }
+        /* ---------- content column ---------- */
+        .right {
+            flex: 1 1 auto;
+            min-width: 0;
         }
         .banner {
             width: 100%;
-            height: 200px;
-            background: rgba(0, 0, 0, 0);
-            border-bottom: 1px solid rgb(0, 255, 204);
-            margin-bottom: 20px;
+            height: 190px;
+            margin-bottom: 24px;
             overflow: hidden;
+        }
+        h2 {
+            background: var(--neon);
+            color: var(--ink);
+            text-shadow: none;
+            margin: 32px 0 12px;
+            padding: 7px 12px;
+            border-radius: var(--radius);
+            box-shadow: 0 0 14px rgba(0, 255, 204, 0.22);
+            font-size: 1.05rem;
+            letter-spacing: 0.04em;
+            scroll-margin-top: 22px;
+        }
+        p {
+            font-size: 0.92rem;
+            line-height: 1.65;
+            margin: 9px 0;
+            max-width: 74ch;
+        }
+        strong { color: #baffee; }
+        div[id] { scroll-margin-top: 22px; }
+        .impressum-link {
+            display: inline-block;
+            margin-top: 26px;
+            font-size: 0.82rem;
+            color: rgba(0, 255, 204, 0.65) !important;
+            border: none !important;
         }
         .impressum-content {
             display: none;
-            background: rgba(0, 0, 0, 0.8);
-            color: #00ffcc;
-            padding: 20px;
-            border: 1px solid #00ffcc;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 18px 20px;
+            border: 1px solid var(--neon-line);
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 16px;
         }
+        .impressum-content h2 { margin-top: 8px; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .container { animation: none; }
+            .node-core, .node-halo, .node-bloom, .edge { animation: none; }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+        }
+        /* ---------- narrow screens: rail folds into a top strip ---------- */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 15px;
-                max-width: 100%;
-            }
-            .content {
-                flex-direction: column;
-            }
+            body { padding: 12px 10px 40px; }
+            .container { padding: 16px; }
+            .content { flex-direction: column; gap: 20px; }
             .left {
+                position: static;
                 flex: none;
-                padding: 15px 0;
-                border-right: none;
-                border-bottom: 1px solid #00ffcc;
-                max-width: 100%;
+                width: 100%;
             }
-            .right {
-                flex: none;
-                padding: 15px 0;
-                text-align: left;
+            .left h1 { font-size: 1.15rem; }
+            .toc { flex-direction: row; flex-wrap: wrap; }
+            .nav-block {
+                flex: 1 1 calc(33.333% - var(--gap));
+                text-align: center;
+                font-size: 0.75rem;
+                opacity: 0.78;
             }
-            h1, h2 {
-                font-size: 1.3rem;
-            }
-            .banner {
-                height: 140px;
-            }
-            .toc {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-            .toc li {
-                margin: 5px 0;
-            }
-            p {
-                font-size: 0.95rem;
-                line-height: 1.5;
-            }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+            .banner { height: 140px; margin-bottom: 18px; }
+            h2 { font-size: 0.95rem; margin: 26px 0 10px; }
         }
         @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-            .container {
-                padding: 10px;
-                border-radius: 5px;
-            }
-            .left, .right {
-                padding: 10px 0;
-            }
-            h1 {
-                font-size: 1.1rem;
-            }
-            h2 {
-                font-size: 1rem;
-            }
-            .banner {
-                height: 110px;
-            }
-            .toc {
-                grid-template-columns: 1fr;
-            }
-            p {
-                font-size: 0.9rem;
-            }
+            body { padding: 8px 6px 32px; }
+            .container { padding: 12px; border-radius: 8px; }
+            .nav-block { flex: 1 1 calc(50% - var(--gap)); }
+            .banner { height: 110px; }
+            .left h1 { font-size: 1.05rem; }
+            h2 { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-        <div class="container">
+    <div class="container">
         <div class="content">
             <div class="left">
                 <h1>Dr.-Ing. Thomas Pöllabauer-Berkei</h1>
-                <p>Technical Lead | Applied AI & Computer Vision</p>
-                <div class="crt-line"></div>
-                <h2>Contents</h2>
-                <div class="toc">
-                    <ul>
-                        <li><a href="#about">About Me</a></li>
-                        <li><a href="#experience">Experience</a></li>
-                        <li><a href="#education">Education</a></li>
-                        <li><a href="#skills">Skills</a></li>
-                        <li><a href="#links">Links and Resources</a></li>
-                        <li><a href="#projects">Personal Projects</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
+                <p class="tagline">Technical Lead | Applied AI &amp; Computer Vision</p>
+                <nav class="toc">
+                    <a class="nav-block" href="#about">About</a>
+                    <a class="nav-block" href="#experience">Experience</a>
+                    <a class="nav-block" href="#education">Education</a>
+                    <a class="nav-block" href="#skills">Skills</a>
+                    <a class="nav-block" href="#achievements">Awards</a>
+                    <a class="nav-block" href="#links">Links</a>
+                    <a class="nav-block" href="#projects">Projects</a>
+                    <a class="nav-block" href="#contact">Contact</a>
+                </nav>
             </div>
             <div class="right">
                 <div class="banner">
@@ -301,14 +295,12 @@
                     deployment in production environments. Strong background in applied
                     research, software architecture, MLOps, and technical leadership with
                     experience across manufacturing, AR/VR, and infrastructure domains.</p>
-                <div class="crt-line"></div>
                 <h2>Core Competencies</h2>
                 <p>
                 Machine Learning • Computer Vision • MLOps • Kubernetes • Cloud-Native AI •
                 Technical Leadership • Industrial AI • Synthetic Data • CI/CD • Applied Research •
                 Software Architecture • Distributed Systems
                 </p>
-                <div class="crt-line"></div>
                 <h2 id="experience">Experience</h2>
                 <p><strong>Technical Lead Predictive Maintenance and AI</strong> <br> 
                     PROFI Engineering Systems AG<br> 
@@ -334,7 +326,6 @@
                     <p>&bull; Supported research and development projects in Computer Vision and Visual Computing.</p>
                     <p>&bull; Worked on optimization, automation, and continuous integration workflows.</p>
                     <p>&bull; Assisted in the development of experimental software prototypes and evaluation pipelines.</p>
-                <div class="crt-line"></div>
                 <h2 id="education">Education</h2>
                 <p><strong>Doctor of Engineering in Computer Science and AI</strong> <br> 
                     Technical University of Darmstadt <br> (2023 - 2025)</p>
@@ -342,7 +333,6 @@
                     Technical University of Darmstadt <br> (2017 - 2020)</p>
                 <p><strong>Bachelor of Science in Computer Science</strong> <br> 
                     Technical University of Berlin <br> (2013 - 2017)</p>
-                <div class="crt-line"></div>
                 <h2 id="skills">Skills</h2>
                 <p>
                     &bull; <strong>Expertise</strong><br>
@@ -377,13 +367,11 @@
                     &bull; <strong>Languages</strong><br>
                     German (native), English (professional proficiency).
                 </p>
-                <div class="crt-line"></div>
                 <h2 id="achievements">Selected Achievements</h2>
                 <p>&bull; Magna Cum Laude PhD in Computer Science and AI.</p>
                 <p>&bull; Published 20+ peer-reviewed papers in Computer Vision and Machine Learning.</p>
                 <p>&bull; Awarded best project at the BMW-Fraunhofer Innovation Program.</p>
                 <p>&bull; Built scalable AI systems spanning research prototypes to production-ready deployments.</p>
-                <div class="crt-line"></div>
                 <h2 id="links">Links and Resources</h2>
                 <div id="links">
                     <p><strong>Publications</strong> <br>
@@ -396,8 +384,7 @@
                         If you want to connect on Linkedin, you can find me
                         <a href="https://www.linkedin.com/in/tpoellabauer/">here</a>. </p>
                 </div>
-                <!-- <div class="crt-line"></div>
-                <h2 id="cv">Curriculum Vitae</h2>
+                <!--                <h2 id="cv">Curriculum Vitae</h2>
                 <p>
                     A detailed overview of my professional experience, research activities,
                     publications, and technical expertise is available in my CV.
@@ -407,18 +394,15 @@
                         Download CV (PDF)
                     </a>
                 </p> -->
-                <div class="crt-line"></div>
                 <h2 id="links">Personal Projects</h2>
                 <div id="projects">
                     <p>One of my hobbies is creative writing. Although I struggle with considering a work finished, you can find one of my novels <a href="sapiens.html">here</a>.
                 </p>
                 </div>
-                <div class="crt-line"></div>
                 <h2 id="contact">Contact</h2>
                 <p>To discuss opportunities, please contact me via the following email address. Thank you. </p>
                 <p>Email: contact (at) this domain</p>
                 <p>Website: thomaspoellabauer.com</p>
-                <div class="crt-line"></div>
                 <a href="#" class="impressum-link" onclick="toggleImpressum()">Impressum</a>
                 <div id="impressum" class="impressum-content">
                     <h2>Impressum</h2>

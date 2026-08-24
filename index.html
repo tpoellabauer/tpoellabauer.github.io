@@ -22,6 +22,10 @@
             0%, 100% { stroke-opacity: 0.12; stroke-width: 0.8; }
             50%      { stroke-opacity: 0.75; stroke-width: 2.6; }
         }
+        @keyframes nodeBloom {
+            0%, 100% { opacity: 0.35; }
+            50%      { opacity: 1; }
+        }
         @keyframes edgeFlicker {
             0%, 100% { stroke-opacity: 0.09; }
             50%      { stroke-opacity: 0.45; }
@@ -74,6 +78,10 @@
             stroke-width: 1;
             animation: nodeHalo 4.5s infinite ease-in-out;
         }
+        .node-bloom {
+            fill: url(#pulseGlowGradient);
+            animation: nodeBloom 4.5s infinite ease-in-out;
+        }
         .edge {
             fill: none;
             stroke: rgb(0, 255, 204);
@@ -82,11 +90,21 @@
             stroke-linecap: round;
             animation: edgeFlicker 7s infinite ease-in-out;
         }
-        .pulse {
-            fill: rgb(200, 255, 245);
+        .pulse-core {
+            fill: rgb(220, 255, 250);
+        }
+        .pulse-bloom {
+            fill: url(#pulseGlowGradient);
+        }
+        .edge-bloom {
+            fill: none;
+            stroke: rgb(0, 255, 204);
+            stroke-opacity: 0.035;
+            stroke-width: 5;
+            stroke-linecap: round;
         }
         @media (prefers-reduced-motion: reduce) {
-            .node-core, .node-halo, .edge { animation: none; }
+            .node-core, .node-halo, .node-bloom, .edge { animation: none; }
         }
         .container {
             display: flex;
@@ -121,9 +139,17 @@
             padding: 20px;
             text-align: justify;
         }
-        h1, h2 {
+        h1 {
             border-bottom: 1px solid #00ffcc;
             padding-bottom: 5px;
+        }
+        h2 {
+            background: #00ffcc;
+            color: #04100d;
+            text-shadow: none;
+            padding: 6px 10px;
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.35);
         }
         .crt-line {
             width: 100%;
@@ -150,8 +176,6 @@
             border-bottom: 1px solid rgb(0, 255, 204);
             margin-bottom: 20px;
             overflow: hidden;
-            perspective: 1000px;
-            filter: blur(0.001px);
         }
         .impressum-content {
             display: none;
@@ -259,24 +283,13 @@
                          preserveAspectRatio="xMidYMid meet" role="img"
                          aria-label="Animated neural network graphic">
                         <defs>
-                            <filter id="crtFilter">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="blur"/>
-                                <feColorMatrix in="blur" type="matrix" values="
-                                    1 0 0 0 0
-                                    0 1 0 0 0
-                                    0 0 1 0 0
-                                    0 0 0 4 -2" result="crtEffect"/>
-                                <feBlend in="SourceGraphic" in2="crtEffect" mode="screen"/>
-                            </filter>
-                            <filter id="pulseGlow" x="-200%" y="-200%" width="500%" height="500%">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="glow"/>
-                                <feMerge>
-                                    <feMergeNode in="glow"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
+                            <radialGradient id="pulseGlowGradient">
+                                <stop offset="0%" stop-color="rgb(220,255,250)" stop-opacity="0.55"/>
+                                <stop offset="45%" stop-color="rgb(0,255,204)" stop-opacity="0.28"/>
+                                <stop offset="100%" stop-color="rgb(0,255,204)" stop-opacity="0"/>
+                            </radialGradient>
                         </defs>
-                        <g id="neuralNetwork" class="neural-network" style="filter: url(#crtFilter);">
+                        <g id="neuralNetwork" class="neural-network">
                             <!-- Nodes, edges and signal pulses are created dynamically -->
                         </g>
                     </svg>
@@ -448,9 +461,11 @@
                 }));
             });
 
+            const bloomLayer = make('g', {});
             const edgeLayer = make('g', {});
             const nodeLayer = make('g', {});
-            const pulseLayer = make('g', { filter: 'url(#pulseGlow)' });
+            const pulseLayer = make('g', {});
+            group.appendChild(bloomLayer);
             group.appendChild(edgeLayer);
             group.appendChild(nodeLayer);
             group.appendChild(pulseLayer);
@@ -464,6 +479,8 @@
                                   ' ' + (to.x - bend) + ',' + to.y +
                                   ' ' + to.x + ',' + to.y;
 
+                        bloomLayer.appendChild(make('path', { class: 'edge-bloom', d: d }));
+
                         const edge = make('path', { class: 'edge', d: d });
                         if (!reducedMotion) {
                             edge.style.animationDelay = rand(0, 7).toFixed(2) + 's';
@@ -471,9 +488,14 @@
                         edgeLayer.appendChild(edge);
 
                         if (reducedMotion || Math.random() > PULSE_CHANCE) return;
-                        const pulse = make('circle', {
-                            class: 'pulse', cx: 0, cy: 0, r: rand(1.8, 3.2).toFixed(2)
-                        });
+                        const coreRadius = rand(1.8, 3.2);
+                        const pulse = make('g', {});
+                        pulse.appendChild(make('circle', {
+                            class: 'pulse-bloom', cx: 0, cy: 0, r: (coreRadius * 4).toFixed(2)
+                        }));
+                        pulse.appendChild(make('circle', {
+                            class: 'pulse-core', cx: 0, cy: 0, r: coreRadius.toFixed(2)
+                        }));
                         pulse.appendChild(make('animateMotion', {
                             path: d,
                             dur: rand(2.6, 5.4).toFixed(2) + 's',
@@ -493,9 +515,12 @@
                 nodeLayer.appendChild(make('circle', {
                     class: 'node-bg', cx: node.x, cy: node.y, r: 8
                 }));
+                const bloom = make('circle', { class: 'node-bloom', cx: node.x, cy: node.y, r: 26 });
+                bloomLayer.appendChild(bloom);
                 const halo = make('circle', { class: 'node-halo', cx: node.x, cy: node.y, r: 11 });
                 const core = make('circle', { class: 'node-core', cx: node.x, cy: node.y, r: 5.5 });
                 if (!reducedMotion) {
+                    bloom.style.animationDelay = delay;
                     halo.style.animationDelay = delay;
                     core.style.animationDelay = delay;
                 }

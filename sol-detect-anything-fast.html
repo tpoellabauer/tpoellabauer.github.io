@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect Anything Fast – SOL Laboratories</title>
+    <meta name="description" content="A Kubernetes-hosted service that fine-tunes a real object detector from one to a few phone photos of a target object in minutes, on modest self-hosted GPU hardware, running live in the browser.">
+    <meta name="author" content="Thomas Pöllabauer-Berkei">
+    <link rel="canonical" href="https://www.thomaspoellabauer.com/sol-detect-anything-fast.html">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Detect Anything Fast – train an object detector from a handful of phone photos">
+    <meta property="og:description" content="Fine-tune a real object detector from one to a few photos in minutes, on modest self-hosted hardware, running live in the browser.">
+    <meta property="og:image" content="https://www.thomaspoellabauer.com/media/sol/daf-preview.jpg">
+    <meta property="og:url" content="https://www.thomaspoellabauer.com/sol-detect-anything-fast.html">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://www.thomaspoellabauer.com/media/sol/daf-preview.jpg">
+
+    <style>
+        :root {
+            --blue:      #6bb4ff;
+            --blue-alt:  #3d8fe0;
+            --blue-dim:  #a7c8ea;
+            --blue-line: rgba(107, 180, 255, 0.38);
+            --blue-soft: rgba(107, 180, 255, 0.07);
+            --ink:       #030d16;
+            --radius:    6px;
+            --rail:      195px;
+            --gap:       5px;
+            --ease:      0.2s ease;
+        }
+        html { scroll-behavior: smooth; }
+        @keyframes fadeIn {
+            0%   { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 22px 18px 60px;
+            color: #eaf2fb;
+            font-family: Georgia, "Times New Roman", serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #04060b;
+            background-image:
+                radial-gradient(900px 520px at 18% -8%, rgba(61, 143, 224, 0.20), transparent 70%),
+                radial-gradient(700px 460px at 92% 8%, rgba(107, 180, 255, 0.10), transparent 70%);
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 980px;
+            margin: auto;
+            background: rgba(5, 8, 14, 0.86);
+            border: 1px solid var(--blue-line);
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 0 24px rgba(107, 180, 255, 0.10), inset 0 1px 0 rgba(107, 180, 255, 0.10);
+            animation: fadeIn 1s ease forwards;
+        }
+        :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+        .container a {
+            color: var(--blue);
+            text-decoration: none;
+            border-bottom: 1px solid var(--blue-line);
+            transition: color var(--ease), border-color var(--ease);
+        }
+        .container a:hover {
+            color: #fff;
+            border-color: var(--blue);
+        }
+        .content {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+        }
+        .left {
+            flex: 0 0 var(--rail);
+            position: sticky;
+            top: 22px;
+        }
+        .left h1 {
+            margin: 0 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--blue-line);
+            font-size: 1.2rem;
+            line-height: 1.3;
+            color: var(--blue);
+        }
+        .tagline {
+            margin: 0 0 18px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--blue-dim);
+        }
+        .toc {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+        }
+        .nav-block {
+            display: block;
+            padding: 7px 12px;
+            background: var(--blue);
+            color: var(--ink) !important;
+            border: none !important;
+            text-align: right;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: var(--radius);
+            opacity: 0.88;
+            transition: opacity var(--ease), box-shadow var(--ease), transform var(--ease);
+        }
+        .nav-block:nth-of-type(even) { background: var(--blue-alt); }
+        .nav-block:hover,
+        .nav-block:focus {
+            opacity: 1;
+            box-shadow: 0 0 14px rgba(107, 180, 255, 0.5);
+            transform: translateX(-3px);
+            outline: none;
+        }
+        .right {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        h2 {
+            background: var(--blue);
+            color: var(--ink);
+            margin: 34px 0 12px;
+            padding: 7px 12px;
+            border-radius: var(--radius);
+            box-shadow: 0 0 14px rgba(107, 180, 255, 0.22);
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            scroll-margin-top: 22px;
+        }
+        h3 {
+            color: var(--blue);
+            font-size: 1.02rem;
+            letter-spacing: 0.02em;
+            margin: 0 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--blue-line);
+        }
+        p {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 10px 0;
+            max-width: 72ch;
+        }
+        strong { color: #cbe5ff; }
+        .lead { font-size: 1.06rem; color: #f2f7fd; }
+        .entry-date {
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--blue-dim);
+            margin: -6px 0 18px;
+        }
+        video, svg, img { max-width: 100%; height: auto; }
+        video { display: block; border: 1px solid var(--blue-line); border-radius: var(--radius); background: #000; }
+        figure { margin: 14px 0 20px; }
+        figcaption {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #c4d6e8;
+            max-width: 72ch;
+            margin-top: 10px;
+            padding-left: 12px;
+            border-left: 2px solid var(--blue-line);
+        }
+        .facts {
+            border: 1px solid var(--blue-line);
+            border-radius: var(--radius);
+            background: var(--blue-soft);
+            padding: 4px 16px;
+            margin: 10px 0 20px;
+        }
+        .facts table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+        .facts td { padding: 9px 4px; border-bottom: 1px solid var(--blue-line); vertical-align: top; line-height: 1.55; }
+        .facts tr:last-child td { border-bottom: none; }
+        .facts td:first-child {
+            color: var(--blue);
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            padding-right: 18px;
+        }
+        .result-set {
+            border: 1px solid var(--blue-line);
+            border-left: 3px solid var(--blue);
+            border-radius: var(--radius);
+            background: var(--blue-soft);
+            padding: 16px 18px;
+            margin: 0 0 18px;
+        }
+        .no-truth {
+            font-size: 0.92rem;
+            color: #c4d6e8;
+            border-left: 2px solid var(--blue-alt);
+            padding-left: 12px;
+        }
+        .metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 4px;
+            padding: 0;
+            list-style: none;
+        }
+        .metrics li {
+            flex: 1 1 130px;
+            border: 1px solid var(--blue-line);
+            border-radius: var(--radius);
+            background: rgba(107, 180, 255, 0.08);
+            padding: 10px 12px;
+        }
+        .metrics b {
+            display: block;
+            font-size: 1.32rem;
+            line-height: 1.15;
+            color: #ffffff;
+        }
+        .metrics span {
+            display: block;
+            margin-top: 3px;
+            font-size: 0.72rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--blue-dim);
+        }
+        section[id] { scroll-margin-top: 22px; }
+        .pair-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--gap);
+        }
+        .pair-grid figcaption {
+            font-size: 0.78rem;
+            color: var(--blue-dim);
+            text-align: center;
+            margin-top: 4px;
+        }
+        figure.pair { margin: 0; }
+        figure.pair > figcaption {
+            font-size: 0.92rem;
+            margin-top: 10px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .container { animation: none; }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+        }
+        @media (max-width: 768px) {
+            .pair-grid { grid-template-columns: 1fr; }
+            body { padding: 12px 10px 40px; }
+            .container { padding: 16px; }
+            .content { flex-direction: column; gap: 20px; }
+            .left { position: static; flex: none; width: 100%; }
+            .left h1 { font-size: 1.08rem; }
+            .toc { flex-direction: row; flex-wrap: wrap; }
+            .nav-block {
+                flex: 1 1 calc(33.333% - var(--gap));
+                text-align: center;
+                font-size: 0.72rem;
+                opacity: 0.92;
+            }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+            h2 { font-size: 0.95rem; margin: 26px 0 10px; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 8px 6px 32px; }
+            .container { padding: 12px; border-radius: 8px; }
+            .nav-block { flex: 1 1 calc(50% - var(--gap)); }
+            .left h1 { font-size: 1rem; }
+            h2 { font-size: 0.9rem; }
+            p { font-size: 0.95rem; line-height: 1.62; }
+            .facts table { font-size: 0.86rem; }
+            .facts td { display: block; }
+            .facts td:first-child { padding-bottom: 0; border-bottom: none; }
+            .metrics li { flex: 1 1 calc(50% - 10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="left">
+                <h1>Detect Anything Fast</h1>
+                <p class="tagline">A SOL Laboratories entry<br>by Thomas Pöllabauer-Berkei</p>
+                <nav class="toc">
+                    <a class="nav-block" href="https://demo.example.com" style="background:#7fd858;">Live Demo</a>
+                    <a class="nav-block" href="#motivation">Motivation</a>
+                    <a class="nav-block" href="#how-it-works">How it works</a>
+                    <a class="nav-block" href="#see-it-run">See it run</a>
+                    <a class="nav-block" href="#results">Results</a>
+                    <a class="nav-block" href="#generalization">How far it generalizes</a>
+                    <a class="nav-block" href="#facts">Measured facts</a>
+                    <a class="nav-block" href="#about">About &amp; contact</a>
+                    <a class="nav-block" href="sol-laboratories.html">SOL Laboratories</a>
+                    <a class="nav-block" href="index.html">Home</a>
+                </nav>
+            </div>
+            <div class="right">
+                <p class="entry-date">24 August 2026 — <a href="sol-laboratories.html">back to SOL Laboratories</a></p>
+
+                <h2 id="motivation">Motivation</h2>
+                <p class="lead">
+                    Most object-detection projects assume you already have hundreds of labeled
+                    images and a cloud GPU bill to match. <strong>Detect Anything Fast</strong>
+                    starts from the opposite assumption: you have one to a few photos of a single
+                    object, a few minutes, and hardware you already own. The system trains a real
+                    object detector for that object end to end — no cloud API, no third-party
+                    vendor in the loop, and no photo of your object ever leaves your own
+                    infrastructure. It runs on a single consumer GPU, fits a hard few-minute
+                    budget because a person is sitting there waiting for it, and the resulting
+                    model runs live in a browser afterwards. Speed, cost, and keeping your data on
+                    your own machines are the point — not squeezing out one more accuracy point.
+                </p>
+                <p><a href="https://demo.example.com"><strong>Try the live demo →</strong></a></p>
+
+                <h2 id="how-it-works">How it works</h2>
+                <figure>
+                    <svg viewBox="0 0 660 596" role="img" aria-labelledby="pipeline-diagram-title pipeline-diagram-desc"
+                         xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; max-width:660px;">
+                        <title id="pipeline-diagram-title">How the detector gets trained and used</title>
+                        <desc id="pipeline-diagram-desc">
+                            Your browser uploads photos and a name for the object, then confirms an
+                            automatic cutout. Our own CPU workers cut out the object and synthesize
+                            training images from it. Our own GPU host fine-tunes the detector and
+                            exports it to ONNX. The finished model is sent back and runs live,
+                            locally, inside your browser.
+                        </desc>
+                        <defs>
+                            <marker id="pd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M0,0 L10,5 L0,10 z" fill="#6bb4ff"></path>
+                            </marker>
+                        </defs>
+                        <style>
+                            .pd-zone-band { fill: rgba(107,180,255,0.045); stroke: rgba(107,180,255,0.30);
+                                            stroke-width: 1; stroke-dasharray: 5 5; }
+                            .pd-card   { fill: rgba(107,180,255,0.10); stroke: rgba(107,180,255,0.45); stroke-width: 1; }
+                            .pd-accent { fill: #6bb4ff; }
+                            .pd-num    { fill: #6bb4ff; }
+                            .pd-numtxt { font-family: Georgia, "Times New Roman", serif; font-size: 13px; font-weight: 700;
+                                         fill: #030d16; text-anchor: middle; }
+                            .pd-label  { font-family: Georgia, "Times New Roman", serif; font-size: 15.5px; fill: #f0f6fd; }
+                            .pd-sub    { font-family: Georgia, "Times New Roman", serif; font-size: 12.5px; fill: #b7cee4; }
+                            .pd-zone   { font-family: Georgia, "Times New Roman", serif; font-size: 11.5px; letter-spacing: 0.14em;
+                                         fill: #8dc0f2; }
+                            .pd-pill   { fill: rgba(107,180,255,0.20); stroke: rgba(107,180,255,0.55); stroke-width: 1; }
+                            .pd-pilltx { font-family: Georgia, "Times New Roman", serif; font-size: 10px; letter-spacing: 0.1em;
+                                         fill: #cfe5ff; text-anchor: middle; }
+                            .pd-arrow  { stroke: #6bb4ff; stroke-width: 2.4; fill: none; marker-end: url(#pd-arrow); }
+                        </style>
+
+                        <!-- zone 1: browser -->
+                        <text x="10" y="22" class="pd-zone">YOUR BROWSER</text>
+                        <rect x="6" y="32" width="648" height="176" rx="10" class="pd-zone-band"></rect>
+
+                        <rect x="24" y="50" width="612" height="58" rx="8" class="pd-card"></rect>
+                        <path d="M24,58 a8,8 0 0 1 8,-8 h2 v58 h-2 a8,8 0 0 1 -8,-8 z" class="pd-accent"></path>
+                        <circle cx="60" cy="79" r="13" class="pd-num"></circle>
+                        <text x="60" y="84" class="pd-numtxt">1</text>
+                        <text x="84" y="75" class="pd-label">Upload a few photos, name the object</text>
+                        <text x="84" y="94" class="pd-sub">nothing trains yet</text>
+                        <rect x="524" y="69" width="94" height="21" rx="10.5" class="pd-pill"></rect>
+                        <text x="571" y="83" class="pd-pilltx">IN BROWSER</text>
+
+                        <line x1="330" y1="110" x2="330" y2="130" class="pd-arrow"></line>
+
+                        <rect x="24" y="132" width="612" height="58" rx="8" class="pd-card"></rect>
+                        <path d="M24,140 a8,8 0 0 1 8,-8 h2 v58 h-2 a8,8 0 0 1 -8,-8 z" class="pd-accent"></path>
+                        <circle cx="60" cy="161" r="13" class="pd-num"></circle>
+                        <text x="60" y="166" class="pd-numtxt">2</text>
+                        <text x="84" y="157" class="pd-label">Confirm the automatic cutout</text>
+                        <text x="84" y="176" class="pd-sub">point-correct it, or it auto-proceeds after a short wait</text>
+                        <rect x="524" y="151" width="94" height="21" rx="10.5" class="pd-pill"></rect>
+                        <text x="571" y="165" class="pd-pilltx">IN BROWSER</text>
+
+                        <line x1="330" y1="208" x2="330" y2="230" class="pd-arrow"></line>
+
+                        <!-- zone 2: own hardware -->
+                        <text x="10" y="248" class="pd-zone">OUR OWN HARDWARE — YOUR PHOTOS NEVER LEAVE IT</text>
+                        <rect x="6" y="258" width="648" height="188" rx="10" class="pd-zone-band"></rect>
+
+                        <rect x="24" y="276" width="612" height="64" rx="8" class="pd-card"></rect>
+                        <path d="M24,284 a8,8 0 0 1 8,-8 h2 v64 h-2 a8,8 0 0 1 -8,-8 z" class="pd-accent"></path>
+                        <circle cx="60" cy="308" r="13" class="pd-num"></circle>
+                        <text x="60" y="313" class="pd-numtxt">3</text>
+                        <text x="84" y="303" class="pd-label">Cut the object out, synthesize ~2000 images</text>
+                        <text x="84" y="322" class="pd-sub">pasted onto varied backgrounds, colour- and blur-matched</text>
+                        <rect x="512" y="298" width="106" height="21" rx="10.5" class="pd-pill"></rect>
+                        <text x="565" y="312" class="pd-pilltx">CPU WORKERS</text>
+
+                        <line x1="330" y1="342" x2="330" y2="362" class="pd-arrow"></line>
+
+                        <rect x="24" y="364" width="612" height="64" rx="8" class="pd-card"></rect>
+                        <path d="M24,372 a8,8 0 0 1 8,-8 h2 v64 h-2 a8,8 0 0 1 -8,-8 z" class="pd-accent"></path>
+                        <circle cx="60" cy="396" r="13" class="pd-num"></circle>
+                        <text x="60" y="401" class="pd-numtxt">4</text>
+                        <text x="84" y="391" class="pd-label">Fine-tune the detector, export to ONNX</text>
+                        <text x="84" y="410" class="pd-sub">one consumer GPU, inside a hard wall-clock budget</text>
+                        <rect x="530" y="386" width="88" height="21" rx="10.5" class="pd-pill"></rect>
+                        <text x="574" y="400" class="pd-pilltx">GPU HOST</text>
+
+                        <line x1="330" y1="446" x2="330" y2="472" class="pd-arrow"></line>
+
+                        <!-- zone 3: back in the browser -->
+                        <text x="10" y="492" class="pd-zone">BACK IN YOUR BROWSER</text>
+                        <rect x="6" y="502" width="648" height="88" rx="10" class="pd-zone-band"></rect>
+
+                        <rect x="24" y="518" width="612" height="58" rx="8" class="pd-card"></rect>
+                        <path d="M24,526 a8,8 0 0 1 8,-8 h2 v58 h-2 a8,8 0 0 1 -8,-8 z" class="pd-accent"></path>
+                        <circle cx="60" cy="547" r="13" class="pd-num"></circle>
+                        <text x="60" y="552" class="pd-numtxt">5</text>
+                        <text x="84" y="543" class="pd-label">Model sent back, runs live on every frame</text>
+                        <text x="84" y="562" class="pd-sub">decoded locally — no per-frame server round trip</text>
+                        <rect x="524" y="537" width="94" height="21" rx="10.5" class="pd-pill"></rect>
+                        <text x="571" y="551" class="pd-pilltx">IN BROWSER</text>
+                    </svg>
+                    <figcaption>
+                        In your browser you upload a handful of photos and name the object, then
+                        confirm an automatically proposed cutout of it. From there the work moves
+                        onto our own hardware: CPU workers cut the object out and synthesize
+                        roughly two thousand training images by pasting it onto varied backgrounds,
+                        then our own GPU host fine-tunes a detector on those images and exports it
+                        to ONNX. The finished model is sent back to your browser, where it runs
+                        live and locally on every frame — no photo or video frame is sent anywhere
+                        for inference, and no per-frame round trip to a server.
+                    </figcaption>
+                </figure>
+                <p>
+                    One decision in that middle step is not obvious and matters more than it
+                    looks: when a cut-out object is pasted onto a new background, it inherits the
+                    photo's own sharpness, noise, and colour statistics, while the background
+                    around it has a different one. Paste it in unchanged and a detector doesn't
+                    learn the object — it learns to find that mismatched seam, and then fails on
+                    real photos that never have it. So before pasting, each cut-out is pushed
+                    through its own resampling, blur, noise, and colour-matching pass tuned to
+                    where it's about to land, matching the destination's imaging history rather
+                    than just brightness. It's the difference between a detector that has actually
+                    learned the object's shape and one that has learned an artifact of how the
+                    training image was built.
+                </p>
+
+                <h2 id="see-it-run">See it run</h2>
+                <figure>
+                    <video autoplay muted loop playsinline preload="metadata"
+                           poster="media/sol/daf-process-poster.jpg"
+                           aria-label="Screen recording of the real frontend: uploading photos, confirming the object cutout, a time-lapsed training run, then live inference on a test video with the object boxed in every frame.">
+                        <source src="media/sol/daf-process.mp4" type="video/mp4">
+                    </video>
+                    <figcaption>
+                        The real frontend, screen-recorded end to end: uploading a handful of
+                        photos, confirming the automatic cutout, training running to completion
+                        (time-lapsed, with the true elapsed time burned in), then live inference on
+                        a test video with the object boxed frame by frame.
+                    </figcaption>
+                </figure>
+
+                <h2 id="results">Results</h2>
+                <p class="no-truth">
+                    Neither test video has ground-truth annotation, so nothing below is an accuracy
+                    figure. What's reported is what the detector's own output looks like across the
+                    footage: how often it fires, how confident it is, and how steady the box is from
+                    one frame to the next.
+                </p>
+
+                <div class="result-set">
+                    <h3>Wooden spinning top</h3>
+                    <figure class="pair">
+                        <div class="pair-grid">
+                            <div>
+                                <video controls playsinline preload="none" poster="media/sol/daf-preview.jpg"
+                                       data-pair="top"
+                                       aria-label="Annotated test video of a wooden spinning top, standard 7-minute run, with the detector's bounding box and confidence drawn on every detected frame.">
+                                    <source src="media/sol/daf-spinning-top.mp4" type="video/mp4">
+                                </video>
+                                <figcaption>About 7 minutes — the standard run</figcaption>
+                            </div>
+                            <div>
+                                <video controls playsinline preload="none" poster="media/sol/daf-preview.jpg"
+                                       data-pair="top"
+                                       aria-label="Annotated test video of a wooden spinning top, extended 14-minute run, with the detector's bounding box and confidence drawn on every detected frame.">
+                                    <source src="media/sol/daf-spinning-top-14min.mp4" type="video/mp4">
+                                </video>
+                                <figcaption>With 7 more minutes (14 in total)</figcaption>
+                            </div>
+                        </div>
+                    </figure>
+                    <ul class="metrics">
+                        <li><b>90.8% / 99.1%</b><span>frames fired (7 / 14 min)</span></li>
+                        <li><b>0.74 / 0.61</b><span>median confidence</span></li>
+                        <li><b>0.90 / 0.90</b><span>box stability (median IoU frame-to-frame)</span></li>
+                        <li><b>442.9 s / 565.2 s</b><span>wall clock (budget 420 s / 840 s)</span></li>
+                    </ul>
+                    <p>
+                        Trained from 16 hand-held photos, over the same 534-frame clip both times.
+                        Neither test video has ground-truth annotation, so nothing here is an accuracy
+                        figure. The standard run overran its 420 s budget at 442.9 s (cut-out and
+                        synthesis running longer than the reference fixture on real, cluttered,
+                        hand-held photos); the extended run finished at 565.2 s, comfortably inside its
+                        840 s budget. With 7 more minutes (14 in total), the detector fired on nearly
+                        every frame (99.1% vs. 90.8%) with the same frame-to-frame box stability (0.90
+                        both), at the cost of a lower median confidence (0.61 vs. 0.74) and two more
+                        jitter events (43 vs. 41). Unlike the bonsai tree below, this object did
+                        improve on one clear measure — how often the detector fires at all — though not
+                        on how confident it is when it does. The shipped defaults were not tuned to
+                        produce this result either way; both numbers are reported as measured.
+                    </p>
+                </div>
+
+                <div class="result-set">
+                    <h3>LEGO bonsai tree</h3>
+                    <figure class="pair">
+                        <div class="pair-grid">
+                            <div>
+                                <video controls playsinline preload="none" poster="media/sol/daf-preview.jpg"
+                                       data-pair="bonsai"
+                                       aria-label="Annotated test video of a LEGO bonsai tree, standard 7-minute run, with the detector's bounding box and confidence drawn on every detected frame.">
+                                    <source src="media/sol/daf-bonsai.mp4" type="video/mp4">
+                                </video>
+                                <figcaption>About 7 minutes — the standard run</figcaption>
+                            </div>
+                            <div>
+                                <video controls playsinline preload="none" poster="media/sol/daf-preview.jpg"
+                                       data-pair="bonsai"
+                                       aria-label="Annotated test video of a LEGO bonsai tree, extended 14-minute run, with the detector's bounding box and confidence drawn on every detected frame.">
+                                    <source src="media/sol/daf-bonsai-tree-14min.mp4" type="video/mp4">
+                                </video>
+                                <figcaption>With 7 more minutes (14 in total)</figcaption>
+                            </div>
+                        </div>
+                    </figure>
+                    <ul class="metrics">
+                        <li><b>88.9% / 85.6%</b><span>frames fired (7 / 14 min)</span></li>
+                        <li><b>0.77 / 0.81</b><span>median confidence</span></li>
+                        <li><b>0.90 / 0.89</b><span>box stability (median IoU frame-to-frame)</span></li>
+                        <li><b>434.0 s / 577.3 s</b><span>wall clock (budget 420 s / 840 s)</span></li>
+                    </ul>
+                    <p>
+                        Trained from 12 hand-held photos, over 583 frames both times (same test clip,
+                        same photos both runs). Neither test video has ground-truth annotation, so
+                        nothing below is an accuracy figure. With 7 more minutes (14 in total: 577.3 s against an
+                        840 s budget, comfortably inside it, versus 434.0 s against 420 s standard),
+                        the detector fired on fewer frames (85.6% vs. 88.9%) and jittered more often
+                        (35 events vs. 26), while median confidence rose slightly (0.81 vs. 0.77) and
+                        box stability held roughly flat (0.89 vs. 0.90). That's a null result, not an
+                        improvement — the extra training time did not make this detector better, and
+                        on two of four measures it looks slightly worse. The likely explanation:
+                        twelve photographs is the limiting factor here, not the 420-second clock; more
+                        optimizer steps over the same small, synthetic-heavy training set does not
+                        manufacture information that was never in the twelve photos to begin with.
+                    </p>
+                </div>
+
+
+                <h2 id="generalization">How far it generalizes</h2>
+                <p>
+                    The two objects above are successes, and two successes are an anecdote. To find
+                    out where the system actually stops working, it is measured against a
+                    <strong>36-object public benchmark</strong> built from four permissively
+                    licensed academic datasets (YCB-V, HomebrewedDB, T-LESS, LineMOD). Each object
+                    gets six input photographs and <strong>twenty held-out real photographs</strong>
+                    with ground-truth boxes — genuine annotated accuracy, not the label-free video
+                    statistics above. The object selection is seeded and the corpus is
+                    content-addressed, so the same benchmark rebuilds byte-identically; twelve of
+                    the thirty-six objects are sealed away and never used for tuning.
+                </p>
+                <p>
+                    These are hard photographs on purpose: cluttered laboratory scenes with many
+                    other objects in frame, most of them industrial parts that look a great deal
+                    like each other. They are much harder than a person holding one object up to a
+                    webcam, which is what the system is actually built for.
+                </p>
+                <ul class="metrics">
+                    <li><b>1 of 24</b><span>objects the detector never finds at all</span></li>
+                    <li><b>19 of 24</b><span>objects it does locate on the held-out photographs</span></li>
+                    <li><b>75–90%</b><span>of held-out frames carry a detection</span></li>
+                    <li><b>12%</b><span>of objects pass the strict ship criterion</span></li>
+                </ul>
+                <p>
+                    That last number is the honest headline, and the gap between it and the three
+                    before it is the interesting part. The ship criterion is deliberately
+                    unforgiving: an object counts only if, on most of its twenty photographs, the
+                    detector produces <em>exactly one</em> confident box in the right place. An
+                    image with the target correctly boxed <em>and</em> a second confident box
+                    somewhere else fails outright, and scores zero.
+                </p>
+                <p>
+                    Measuring which of those two things goes wrong turned out to matter more than
+                    the headline. It is almost never blindness — the detector finds its target in
+                    the great majority of frames. It is competing boxes: <strong>roughly 84% of the
+                    extra confident boxes land on a different object in the scene</strong>, not on
+                    a duplicate of the target. In a cluttered bin of similar industrial parts, a
+                    detector trained on one of them fires on its neighbours.
+                </p>
+                <p>
+                    So the fair statement of what this system does is narrower than its name:
+                    <strong>it trains a detector for your object, against the kind of background
+                    you photographed it on, in minutes.</strong> It is not a general-purpose
+                    detector, and it degrades when other objects compete for the box. That is the
+                    limitation to know about before pointing it at a busy scene — and, unsurprisingly,
+                    it is where the current work is.
+                </p>
+
+                <h2 id="facts">Measured facts</h2>
+                <div class="facts">
+                    <table>
+                        <tr><td>Training photos</td><td>16 (spinning top), 12 (bonsai tree) — hand-held phone photos, not a curated dataset</td></tr>
+                        <tr><td>Wall-clock time</td><td>442.9 s and 434.0 s against a 420 s budget — both runs overran; overrun reported, not hidden</td></tr>
+                        <tr><td>Hardware</td><td>a single NVIDIA RTX 2060 Super (8 GB) plus a consumer 6-core CPU, on our own GPU host and a private Kubernetes cluster — no cloud GPU rented for these runs</td></tr>
+                        <tr><td>Where it runs</td><td>continuously deployed on that same self-hosted infrastructure, not a one-off script — a visitor can run the whole pipeline again right now</td></tr>
+                        <tr><td>Interface</td><td>a point-and-click browser upload and confirm flow — no command line, no config file, built for someone who isn't a machine-learning engineer</td></tr>
+                        <tr><td>Licensing</td><td>every dependency shipped with the trained model is permissively licensed, because the exported model is served straight into a client's browser</td></tr>
+                        <tr><td>Data handling</td><td>uploaded photos and the trained model stay on the operator's own infrastructure end to end</td></tr>
+                        <tr><td>Validation</td><td>both objects above were never seen during development and were filmed on an ordinary phone, hand-held, not staged for the camera</td></tr>
+                        <tr><td>Generalization</td><td>measured on a 36-object public benchmark (YCB-V, HomebrewedDB, T-LESS, LineMOD) with twenty ground-truth-annotated held-out photographs per object — 12% of objects pass the strict single-box ship criterion, and the dominant failure is a confident box on a neighbouring object rather than a missed target</td></tr>
+                    </table>
+                </div>
+                <p>
+                    If your problem looks like this — your own hardware, your own data that can't
+                    leave the building, a small compute budget, and a training time measured in
+                    minutes rather than hours — this is the constraint set the system is built
+                    around.
+                </p>
+
+                <h2 id="about">About &amp; contact</h2>
+                <p>
+                    Built by <strong>Thomas Pöllabauer-Berkei</strong> — the detection and
+                    synthetic-data modeling, the browser interface, and the Kubernetes deployment
+                    and operation are all one person's work, top to bottom. Professional background
+                    and contact details are on the
+                    <a href="index.html#contact">home page</a>; you can also connect on
+                    <a href="https://www.linkedin.com/in/tpoellabauer/">LinkedIn</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+    <script>
+        // "Plays together": mirror play/pause/seeked between videos sharing a
+        // data-pair value. JS off or erroring -> both stay independently
+        // playable via native controls; no external request, no library.
+        (function () {
+            try {
+                var groups = {};
+                document.querySelectorAll('video[data-pair]').forEach(function (v) {
+                    var key = v.getAttribute('data-pair');
+                    (groups[key] = groups[key] || []).push(v);
+                });
+                Object.keys(groups).forEach(function (key) {
+                    var vids = groups[key];
+                    if (vids.length < 2) return;
+                    var syncing = false;
+                    vids.forEach(function (v) {
+                        ['play', 'pause', 'seeked'].forEach(function (evt) {
+                            v.addEventListener(evt, function () {
+                                if (syncing) return;
+                                syncing = true;
+                                vids.forEach(function (other) {
+                                    if (other === v) return;
+                                    try {
+                                        if (Math.abs(other.currentTime - v.currentTime) > 0.25) {
+                                            other.currentTime = v.currentTime;
+                                        }
+                                        if (evt === 'play' && other.paused) other.play().catch(function () {});
+                                        if (evt === 'pause' && !other.paused) other.pause();
+                                    } catch (e) { /* independent playback still works */ }
+                                });
+                                syncing = false;
+                            });
+                        });
+                    });
+                });
+            } catch (e) { /* both videos remain independently playable */ }
+        })();
+    </script>
+</body>
+</html>

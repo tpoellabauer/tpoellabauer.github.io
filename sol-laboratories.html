@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOL Laboratories – Applied AI, built and shipped</title>
+    <meta name="description" content="SOL Laboratories: short, concrete write-ups of real machine-learning systems built end to end by Thomas Pöllabauer-Berkei — the modeling, the interface, and the deployment.">
+    <meta name="author" content="Thomas Pöllabauer-Berkei">
+    <link rel="canonical" href="https://www.thomaspoellabauer.com/sol-laboratories.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SOL Laboratories – Applied AI, built and shipped">
+    <meta property="og:description" content="Short, concrete write-ups of real machine-learning systems built end to end — the modeling, the interface, and the deployment.">
+    <meta property="og:image" content="https://www.thomaspoellabauer.com/media/sol/sol-preview.jpg">
+    <meta property="og:url" content="https://www.thomaspoellabauer.com/sol-laboratories.html">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://www.thomaspoellabauer.com/media/sol/sol-preview.jpg">
+
+    <style>
+        :root {
+            --blue:      #6bb4ff;
+            --blue-alt:  #3d8fe0;
+            --blue-dim:  #a7c8ea;
+            --blue-line: rgba(107, 180, 255, 0.38);
+            --blue-soft: rgba(107, 180, 255, 0.07);
+            --ink:       #030d16;
+            --radius:    6px;
+            --rail:      195px;
+            --gap:       5px;
+            --ease:      0.2s ease;
+        }
+        html { scroll-behavior: smooth; }
+        @keyframes fadeIn {
+            0%   { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 22px 18px 60px;
+            color: #eaf2fb;
+            font-family: Georgia, "Times New Roman", serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #04060b;
+            background-image:
+                radial-gradient(900px 520px at 18% -8%, rgba(61, 143, 224, 0.20), transparent 70%),
+                radial-gradient(700px 460px at 92% 8%, rgba(107, 180, 255, 0.10), transparent 70%);
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 980px;
+            margin: auto;
+            background: rgba(5, 8, 14, 0.86);
+            border: 1px solid var(--blue-line);
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 0 24px rgba(107, 180, 255, 0.10), inset 0 1px 0 rgba(107, 180, 255, 0.10);
+            animation: fadeIn 1s ease forwards;
+        }
+        :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+        .container a {
+            color: var(--blue);
+            text-decoration: none;
+            border-bottom: 1px solid var(--blue-line);
+            transition: color var(--ease), border-color var(--ease);
+        }
+        .container a:hover {
+            color: #fff;
+            border-color: var(--blue);
+        }
+        .content {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+        }
+        .left {
+            flex: 0 0 var(--rail);
+            position: sticky;
+            top: 22px;
+        }
+        .left h1 {
+            margin: 0 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--blue-line);
+            font-size: 1.3rem;
+            line-height: 1.3;
+            color: var(--blue);
+        }
+        .tagline {
+            margin: 0 0 18px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--blue-dim);
+        }
+        .toc {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+        }
+        .nav-block {
+            display: block;
+            padding: 7px 12px;
+            background: var(--blue);
+            color: var(--ink) !important;
+            border: none !important;
+            text-align: right;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border-radius: var(--radius);
+            opacity: 0.88;
+            transition: opacity var(--ease), box-shadow var(--ease), transform var(--ease);
+        }
+        .nav-block:nth-of-type(even) { background: var(--blue-alt); }
+        .nav-block:hover,
+        .nav-block:focus {
+            opacity: 1;
+            box-shadow: 0 0 14px rgba(107, 180, 255, 0.5);
+            transform: translateX(-3px);
+            outline: none;
+        }
+        .right {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        h2 {
+            background: var(--blue);
+            color: var(--ink);
+            margin: 32px 0 12px;
+            padding: 7px 12px;
+            border-radius: var(--radius);
+            box-shadow: 0 0 14px rgba(107, 180, 255, 0.22);
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            scroll-margin-top: 22px;
+        }
+        p {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 10px 0;
+            max-width: 72ch;
+        }
+        strong { color: #cbe5ff; }
+        .lead { font-size: 1.06rem; color: #f2f7fd; }
+        .entry-list { list-style: none; margin: 12px 0; padding: 0; }
+        .entry-list li {
+            position: relative;
+            border: 1px solid var(--blue-line);
+            border-left: 3px solid var(--blue);
+            border-radius: var(--radius);
+            background: var(--blue-soft);
+            padding: 14px 16px;
+            margin: 0 0 12px;
+            transition: background var(--ease), border-color var(--ease), transform var(--ease);
+        }
+        .entry-list li:hover {
+            background: rgba(107, 180, 255, 0.13);
+            transform: translateX(3px);
+        }
+        .entry-date {
+            display: block;
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--blue-dim);
+            margin-bottom: 6px;
+        }
+        .entry-title { font-size: 1.08rem; margin: 0 0 6px; }
+        .entry-title a { border-bottom: none !important; color: #eaf2fb !important; }
+        .entry-title a:hover { color: var(--blue) !important; }
+        .entry-summary { margin: 0; font-size: 0.94rem; color: #d3e2f2; }
+        section[id] { scroll-margin-top: 22px; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .container { animation: none; }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 12px 10px 40px; }
+            .container { padding: 16px; }
+            .content { flex-direction: column; gap: 20px; }
+            .left { position: static; flex: none; width: 100%; }
+            .left h1 { font-size: 1.15rem; }
+            .toc { flex-direction: row; flex-wrap: wrap; }
+            .nav-block {
+                flex: 1 1 calc(33.333% - var(--gap));
+                text-align: center;
+                font-size: 0.75rem;
+                opacity: 0.92;
+            }
+            .entry-list li:hover { transform: none; }
+            .nav-block:hover, .nav-block:focus { transform: none; }
+            h2 { font-size: 0.95rem; margin: 26px 0 10px; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 8px 6px 32px; }
+            .container { padding: 12px; border-radius: 8px; }
+            .nav-block { flex: 1 1 calc(50% - var(--gap)); }
+            .left h1 { font-size: 1.05rem; }
+            h2 { font-size: 0.9rem; }
+            p { font-size: 0.92rem; line-height: 1.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="left">
+                <h1>SOL Laboratories</h1>
+                <p class="tagline">Applied AI, built and shipped</p>
+                <nav class="toc">
+                    <a class="nav-block" href="#about">About</a>
+                    <a class="nav-block" href="#entries">Entries</a>
+                    <a class="nav-block" href="index.html">Home</a>
+                </nav>
+            </div>
+            <div class="right">
+                <h2 id="about">About</h2>
+                <p class="lead">
+                    SOL Laboratories is where I write up machine-learning systems I've built end to
+                    end — not papers, not pitches. Each entry covers one real, working system: what
+                    it does, how it's built, what it actually measures, and what I personally did to
+                    ship it — the modeling, the interface people use, and the infrastructure it runs
+                    on.
+                </p>
+                <h2 id="entries">Entries</h2>
+                <ul class="entry-list">
+                    <li>
+                        <span class="entry-date">24 August 2026</span>
+                        <p class="entry-title"><a href="sol-detect-anything-fast.html">Detect Anything Fast — train an object detector from a handful of phone photos</a></p>
+                        <p class="entry-summary">A Kubernetes-hosted service that fine-tunes a real object detector from one to a few photos of a target object in minutes, on modest self-hosted GPU hardware, with the finished model running live in the browser.</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

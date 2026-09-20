@@ -299,6 +299,7 @@
                     <a class="nav-block" href="#see-it-run">See it run</a>
                     <a class="nav-block" href="#results">Results</a>
                     <a class="nav-block" href="#generalization">How far it generalizes</a>
+                    <a class="nav-block" href="#industrial">Industrial scenes</a>
                     <a class="nav-block" href="#facts">Measured facts</a>
                     <a class="nav-block" href="#about">About &amp; contact</a>
                     <a class="nav-block" href="sol-laboratories.html">SOL Laboratories</a>
@@ -609,6 +610,81 @@
                     it is where the current work is.
                 </p>
 
+                <h2 id="industrial">Cluttered industrial scenes</h2>
+                <p>
+                    The public benchmark above uses real photographs. To probe the failure it
+                    exposed, the same pipeline was also run on <strong>eight rendered industrial
+                    scenes</strong> — automotive QA, bottling, chemical plant, CNC machining,
+                    electronics assembly, paint shop, sorting centre and warehouse — each full of
+                    lookalike parts. These are renders, not photographs, and they are our own
+                    synthetic data. One object per scene was trained from <strong>six input
+                    crops</strong> and scored on <strong>twenty held-out crops</strong> cut from
+                    scenes never used as input, with the shipped defaults and the same minutes-long
+                    budget.
+                </p>
+                <p>
+                    One deliberate simplification: every input and held-out image is a
+                    2.5&times; context crop around a single target instance, and a crop is kept only
+                    if no second instance of the <em>same</em> object overlaps it. Neighbouring
+                    objects of other kinds stay in frame, so confusion with lookalikes is still
+                    tested; a second box on a second copy of the target is not, because the scoring
+                    would wrongly count it as a mistake.
+                </p>
+                <ul class="metrics">
+                    <li><b>1 of 8</b><span>objects located reliably (shipped defaults)</span></li>
+                    <li><b>29%</b><span>of held-out crops carry a confident detection</span></li>
+                    <li><b>14%</b><span>single-box pass rate over all crops</span></li>
+                    <li><b>58%</b><span>of the 19 competing boxes land on a neighbouring object</span></li>
+                </ul>
+                <div class="facts">
+                    <table>
+                        <tr><td>Scene — object</td><td>Shipped defaults (of 20 crops)</td><td>With composited negatives (of 20 crops)</td></tr>
+                        <tr><td>Automotive QA — hub flange</td><td>16 passing · 16 with a detection</td><td>7 passing · 7 with a detection</td></tr>
+                        <tr><td>Bottling plant — glass bottle</td><td>1 passing · 1 with a detection</td><td>2 passing · 2 with a detection</td></tr>
+                        <tr><td>Chemical plant — pressure gauge</td><td>0 passing · 2 with a detection</td><td>0 passing · 3 with a detection</td></tr>
+                        <tr><td>CNC machining — tool holder</td><td>5 passing · 18 with a detection</td><td>3 passing · 13 with a detection</td></tr>
+                        <tr><td>Electronics assembly — heatsink</td><td>0 passing · 1 with a detection</td><td>0 passing · 0 with a detection</td></tr>
+                        <tr><td>Paint shop — fender</td><td>0 passing · 5 with a detection</td><td>0 passing · 9 with a detection</td></tr>
+                        <tr><td>Sorting centre — medium carton</td><td>0 passing · 3 with a detection</td><td>0 passing · 6 with a detection</td></tr>
+                        <tr><td>Warehouse — plastic crate</td><td>0 passing · 0 with a detection</td><td>0 passing · 9 with a detection</td></tr>
+                    </table>
+                </div>
+                <p>
+                    &ldquo;Passing&rdquo; is the strict criterion described above: exactly one confident
+                    box, in the right place. &ldquo;With a detection&rdquo; counts crops where the
+                    detector fired at all. The second column repeats every run with the
+                    discrimination lever that did best on the public benchmark (a quarter of the
+                    background frames carry a pasted-in distractor): it fires on slightly more
+                    crops overall (31% against 29%) but
+                    passes fewer (7.5% against 13.8%), and locates none of the eight.
+                </p>
+
+                <h3>What it looks like</h3>
+                <figure>
+                    <img src="media/sol/daf-industrial-grid-1.jpg" alt="Four rows of four held-out industrial crops (automotive hub flange, glass bottle, pressure gauge, CNC tool holder) with the true box in green and the detector's boxes in red and amber." loading="lazy">
+                    <figcaption>Held-out crops for the first four scenes, shipped defaults. Each row shows four crops ordered from the best to the worst result for that object; green is the ground-truth box, red the highest-scoring detection, amber any further confident box. Rows are not cherry-picked: the spread is fixed by rank.</figcaption>
+                </figure>
+                <figure>
+                    <img src="media/sol/daf-industrial-grid-2.jpg" alt="Four rows of four held-out industrial crops (heatsink, fender, medium carton, plastic crate) with the true box in green and the detector's boxes in red and amber." loading="lazy">
+                    <figcaption>The remaining four scenes. Several crops are heavily blurred or blown out to near-white by the renderer, so the target is barely visible; the detector stays silent on those, which is why most failures below are missing detections rather than wrong ones.</figcaption>
+                </figure>
+                <p>
+                    <strong>The reading.</strong> These scenes are harder than the public benchmark,
+                    and the difference is instructive. There, the detector nearly always fired and
+                    failed by adding boxes on neighbours; here it mostly stays silent, on
+                    29% of crops, and only one object — the automotive hub
+                    flange — is found reliably. Competing boxes still exist but come from very few
+                    objects: the CNC tool holder accounts for 18 of the 19. So the earlier statement that the
+                    dominant failure is a confident box on a neighbour holds for the tool holder and
+                    for the fender under the composited-negative recipe, and does not describe the
+                    other scenes, where the failure is a target the detector never picks up. Part of
+                    that is the data (blurred and overexposed renders, six input crops per object, one seed, one object per
+                    scene), so this section supports &ldquo;fails often on cluttered, low-quality
+                    scenes&rdquo;, not any figure for how it would do on your factory floor. The
+                    composited-negative recipe did not rescue it here; it is the lever that helped
+                    most on the public benchmark, and it is not a general fix.
+                </p>
+
                 <h2 id="facts">Measured facts</h2>
                 <div class="facts">
                     <table>
@@ -620,6 +696,7 @@
                         <tr><td>Licensing</td><td>every dependency shipped with the trained model is permissively licensed, because the exported model is served straight into a client's browser</td></tr>
                         <tr><td>Data handling</td><td>uploaded photos and the trained model stay on the operator's own infrastructure end to end</td></tr>
                         <tr><td>Validation</td><td>both objects above were never seen during development and were filmed on an ordinary phone, hand-held, not staged for the camera</td></tr>
+                        <tr><td>Industrial scenes</td><td>eight rendered scenes, one object each, six input crops and twenty held-out crops per object — one object is found reliably; most failures are a missed target, not a competing box</td></tr>
                         <tr><td>Generalization</td><td>measured on a 36-object public benchmark (YCB-V, HomebrewedDB, T-LESS, LineMOD) with twenty ground-truth-annotated held-out photographs per object — 12% of objects pass the strict single-box ship criterion, and the dominant failure is a confident box on a neighbouring object rather than a missed target</td></tr>
                     </table>
                 </div>

@@ -13,6 +13,30 @@
     <meta property="og:description" content="Technical Lead and AI specialist in Computer Vision, Machine Learning and cloud-native AI infrastructure.">
     <meta property="og:url" content="https://www.thomaspoellabauer.com/">
     <meta property="og:locale" content="en_US">
+    <meta property="og:image" content="https://www.thomaspoellabauer.com/portrait.jpg">
+    <link rel="icon" type="image/png" href="logo.png">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Thomas Pöllabauer-Berkei",
+        "honorificPrefix": "Dr.-Ing.",
+        "jobTitle": "Technical Lead",
+        "worksFor": { "@type": "Organization", "name": "PROFI Engineering Systems AG" },
+        "alumniOf": [
+            { "@type": "CollegeOrUniversity", "name": "Technical University of Darmstadt" },
+            { "@type": "CollegeOrUniversity", "name": "Technical University of Berlin" }
+        ],
+        "url": "https://www.thomaspoellabauer.com/",
+        "image": "https://www.thomaspoellabauer.com/portrait.jpg",
+        "sameAs": [
+            "https://www.linkedin.com/in/tpoellabauer/",
+            "https://scholar.google.com/citations?user=HL14YPkAAAAJ",
+            "https://orcid.org/0000-0003-0075-1181",
+            "https://huggingface.co/tpoellabauer"
+        ]
+    }
+    </script>
     <style>
         :root {
             --neon:      #00ffcc;
@@ -104,9 +128,7 @@
             padding: 26px;
             border-radius: 12px;
             box-shadow: 0 0 24px rgba(0, 255, 204, 0.12);
-            visibility: hidden;
-            opacity: 0;
-            animation: fadeIn 1s ease forwards;
+            animation: fadeIn 1s ease both;
         }
         .container a {
             color: var(--neon);
@@ -117,6 +139,10 @@
         .container a:hover {
             color: #d9fff6;
             border-color: var(--neon);
+        }
+        .container a:focus-visible {
+            outline: 1px solid var(--neon);
+            outline-offset: 2px;
         }
         .content {
             display: flex;
@@ -135,6 +161,17 @@
             border-bottom: 1px solid var(--neon-line);
             font-size: 1.3rem;
             line-height: 1.3;
+        }
+        .portrait {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1;
+            object-fit: cover;
+            margin: 0 0 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--neon-line);
+            box-shadow: 0 0 14px rgba(0, 255, 204, 0.18);
         }
         .tagline {
             margin: 0 0 18px;
@@ -198,17 +235,51 @@
             margin: 9px 0;
             max-width: 74ch;
         }
+        ul {
+            list-style: none;
+            margin: 9px 0;
+            padding: 0;
+            max-width: 74ch;
+        }
+        li {
+            font-size: 0.92rem;
+            line-height: 1.65;
+            margin: 9px 0;
+        }
+        li::before { content: "\2022\00a0"; }
         strong { color: #baffee; }
         div[id] { scroll-margin-top: 22px; }
+        .reveal {
+            padding: 0;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--neon-line);
+            color: var(--neon);
+            font: inherit;
+            text-shadow: inherit;
+            cursor: pointer;
+            transition: color var(--ease), border-color var(--ease);
+        }
+        .reveal:hover,
+        .reveal:focus-visible {
+            color: #d9fff6;
+            border-color: var(--neon);
+        }
+        /* Address is stored reversed in the source and displayed in reading order. */
+        .rev {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+        }
         .impressum-link {
             display: inline-block;
             margin-top: 26px;
             font-size: 0.82rem;
-            color: rgba(0, 255, 204, 0.65) !important;
-            border: none !important;
+            color: rgba(0, 255, 204, 0.65);
+            cursor: pointer;
+            list-style: none;
         }
+        .impressum-link::-webkit-details-marker { display: none; }
         .impressum-content {
-            display: none;
             background: rgba(0, 0, 0, 0.6);
             padding: 18px 20px;
             border: 1px solid var(--neon-line);
@@ -233,6 +304,7 @@
                 width: 100%;
             }
             .left h1 { font-size: 1.15rem; }
+            .portrait { width: 140px; }
             .toc { flex-direction: row; flex-wrap: wrap; }
             .nav-block {
                 flex: 1 1 calc(33.333% - var(--gap));
@@ -259,16 +331,21 @@
         <div class="content">
             <div class="left">
                 <h1>Dr.-Ing. Thomas Pöllabauer-Berkei</h1>
+                <picture>
+                    <source srcset="portrait.webp" type="image/webp">
+                    <img class="portrait" src="portrait.jpg" width="400" height="400"
+                         alt="Portrait of Thomas Pöllabauer-Berkei">
+                </picture>
                 <p class="tagline">Technical Lead | Applied AI &amp; Computer Vision</p>
                 <nav class="toc">
                     <a class="nav-block" href="#about">About</a>
                     <a class="nav-block" href="#cv">CV</a>
                     <a class="nav-block" href="#experience">Experience</a>
+                    <a class="nav-block" href="#projects">Projects</a>
+                    <a class="nav-block" href="#publications">Publications</a>
                     <a class="nav-block" href="#education">Education</a>
                     <a class="nav-block" href="#skills">Skills</a>
                     <a class="nav-block" href="#achievements">Awards</a>
-                    <a class="nav-block" href="#links">Links</a>
-                    <a class="nav-block" href="#projects">Projects</a>
                     <a class="nav-block" href="#contact">Contact</a>
                 </nav>
             </div>
@@ -296,12 +373,6 @@
                     deployment in production environments. Strong background in applied
                     research, software architecture, MLOps, and technical leadership with
                     experience across manufacturing, AR/VR, and infrastructure domains.</p>
-                <h2>Core Competencies</h2>
-                <p>
-                Machine Learning • Computer Vision • MLOps • Kubernetes • Cloud-Native AI •
-                Technical Leadership • Industrial AI • Synthetic Data • CI/CD • Applied Research •
-                Software Architecture • Distributed Systems
-                </p>
                 <h2 id="cv">Curriculum Vitae</h2>
                 <p>
                     A detailed overview of my professional experience, research activities,
@@ -313,109 +384,125 @@
                     </a>
                 </p>
                 <h2 id="experience">Experience</h2>
-                <p><strong>Technical Lead Predictive Maintenance and AI</strong> <br> 
-                    PROFI Engineering Systems AG<br> 
-                    (2025 - currently)</p>
-                    <p>&bull; Leading software and AI development for industrial predictive maintenance solutions.</p>
-                    <p>&bull; Designing scalable system architectures for cloud-native and AI-driven applications.</p>
-                    <p>&bull; Acting as domain expert for Machine Learning, Computer Vision, and applied AI systems.</p>
-                    <p>&bull; Driving technical strategy, infrastructure decisions, and development workflows.</p>
-                    <p>&bull; Leading infrastructure and deployment initiatives based on Kubernetes and OpenShift technologies.</p>
-                <p><strong>Research Scientist Computer Vision and Machine Learning</strong> <br> 
-                    Fraunhofer Institute for Computer Graphics Research IGD <br> 
-                    (2020 - 2024)</p>
-                    <p>&bull; Conducted applied research and industrial technology transfer in Computer Vision and Machine Learning.</p>
-                    <p>&bull; Designed and implemented state-of-the-art solutions for object detection, pose estimation, segmentation, and classification.</p>
-                    <p>&bull; Led and contributed to industry collaborations in manufacturing, robotics, AR/VR, automotive, and infrastructure domains.</p>
-                    <p>&bull; Developed synthetic data generation pipelines and domain adaptation approaches for robust AI systems.</p>
-                    <p>&bull; Built scalable training and inference infrastructures for real-world industrial deployment.</p>
-                    <p>&bull; Supervised student research projects and contributed to academic teaching activities.</p>
-                    <p>&bull; Published peer-reviewed research in Computer Vision, Machine Learning, and 3D Vision.</p>
-                <p><strong>Research Assistant</strong> <br> 
-                    Fraunhofer Institute for Computer Graphics Research IGD <br> 
-                    (2018 - 2020)</p>
-                    <p>&bull; Supported research and development projects in Computer Vision and Visual Computing.</p>
-                    <p>&bull; Worked on optimization, automation, and continuous integration workflows.</p>
-                    <p>&bull; Assisted in the development of experimental software prototypes and evaluation pipelines.</p>
+                <p><strong>Technical Lead Predictive Maintenance and AI</strong> <br>
+                    PROFI Engineering Systems AG <br>
+                    (May 2025 – present)</p>
+                <ul>
+                    <li>Own technical strategy, architecture, and delivery of AI-driven software products, including PROinfra: predictive maintenance for civil infrastructure such as bridges, roads, and retaining walls.</li>
+                    <li>Domain expert for Machine Learning, Computer Vision, and applied AI; lead containerization and orchestration of deployments (Docker, Podman, Kubernetes, OpenShift).</li>
+                    <li>Introduced department-wide Kubernetes-based DevOps and continuous deployment following Infrastructure-as-Code and GitOps principles.</li>
+                    <li>Architected and rolled out a department-wide, spec-driven development workflow for agentic AI with human-supervised review gates, enabling safe and auditable use.</li>
+                    <li>Coordinate engineering, product, and business stakeholders; pre-sales and technical consulting for customers and partners; hire and mentor engineering talent.</li>
+                </ul>
+                <p><strong>Research Scientist, Deep Learning &amp; Computer Vision</strong> <br>
+                    Fraunhofer Institute for Computer Graphics Research IGD, Virtual and Augmented Reality <br>
+                    (Apr 2020 – Dec 2024)</p>
+                <ul>
+                    <li>Applied research and industrial technology transfer: state-of-the-art Computer Vision for object detection, 6D pose estimation, segmentation, and classification.</li>
+                    <li>Generative ML models (GANs, encoder-decoder, diffusion), synthetic data pipelines, and domain adaptation for robust AI with limited real data.</li>
+                    <li>Automated industrial quality inspection; scalable training and inference infrastructure for real-world deployment.</li>
+                    <li>Trained, tuned, monitored, and deployed state-of-the-art ML models for research and industry projects.</li>
+                    <li>Deployed ML workflows on high-performance computing (HPC) clusters, including for doctoral research at TU Darmstadt.</li>
+                    <li>Project lead of Fraunhofer-wide research projects and industry collaborations in manufacturing, robotics, AR/VR, automotive, and infrastructure.</li>
+                    <li>Supervised student research, contributed to academic teaching, and published peer-reviewed work in Computer Vision, Machine Learning, and 3D Vision.</li>
+                </ul>
+                <p><strong>Student Assistant, Computer Vision</strong> <br>
+                    Fraunhofer Institute for Computer Graphics Research IGD, Virtual and Augmented Reality <br>
+                    (Sept 2018 – Feb 2020)</p>
+                <ul>
+                    <li>Data analysis, continuous integration and testing, Machine Learning, and optimization for Computer Vision and Visual Computing projects.</li>
+                    <li>Quality assurance in an Industry 4.0 context in cooperation with Daimler AG.</li>
+                    <li>Developed experimental software prototypes and evaluation pipelines.</li>
+                </ul>
+                <h2 id="projects">Selected Projects</h2>
+                <ul>
+                    <li><strong><a href="https://www.iis.fraunhofer.de/de/magazin/serien/kuenstliche-intelligenz-ki-serie/fraunhofer-projekt-sec-learn.html">SEC-Learn</a></strong>: Sensor Edge Cloud for distributed learning.
+                        Project Lead, Fraunhofer-wide research project (Jan 2021 – Dec 2024).</li>
+                    <li><strong><a href="https://www.fraunhofer.de/de/forschung/fraunhofer-initiativen/fraunhofer-leitprojekte/bau-dns.html">BAU-DNS</a></strong>: sustainable, modular, and circular building renovation.
+                        Project Lead, Fraunhofer-wide research project (Mar 2023 – Dec 2024).</li>
+                    <li><strong><a href="https://softwarecampus.de/en/projekt/diffed-pose-optimisation-of-deep-learning-based-object-pose-estimation-with-only-synthetic-data-differentiable-rendering-driven-federated-learning/">DiffEd-Pose</a></strong>: object pose estimation from synthetic data via differentiable-rendering-driven federated learning.
+                        Project Lead, cooperation with Software AG within the Software Campus program (Feb 2021 – Jan 2022).</li>
+                    <li><strong><a href="https://www.igd.fraunhofer.de/de/media-center/aktuelles/computer-graphics-night-2022-preistraeger.html">ICE Train Interior Surveillance</a></strong>: proof of concept in cooperation with Deutsche Bahn AG (Mar 2022 – Sept 2022).
+                        3rd place, Best Industrial Project at Fraunhofer IGD.</li>
+                </ul>
+                <h2 id="publications">Selected Publications</h2>
+                <ul>
+                    <li>Pöllabauer et al. <em>Improving 6D Object Pose Estimation of Metallic Household and Industry Objects.</em> IEEE/RSJ IROS 2025.</li>
+                    <li>Pöllabauer et al. <em>End-to-End Probabilistic Geometry-Guided Regression for 6DoF Object Pose Estimation.</em> IEEE AIxVR 2025.</li>
+                    <li>Pöllabauer et al. <em>Generalizing Neural Radiance Fields for Robust 6D Pose Estimation of Unseen Appearances.</em> ISVC 2024.</li>
+                    <li>Pöllabauer et al. <em>Fast Training Data Acquisition for Object Detection and Segmentation using Black Screen Luminance Keying.</em> WSCG 2024.</li>
+                    <li>Pöllabauer et al. <em>Detection and Pose Estimation of Flat, Texture-less Industry Objects on HoloLens using Synthetic Training.</em> SCIA 2023.</li>
+                    <li>Pöllabauer. <em>Advancing Machine Learning Algorithms for Object Localization in Data-Limited Scenarios.</em> Dissertation, TU Darmstadt, 2025.</li>
+                </ul>
+                <p>Full list on <a href="https://scholar.google.com/citations?user=HL14YPkAAAAJ">Google Scholar</a>
+                    and <a href="https://orcid.org/0000-0003-0075-1181">ORCID</a>.
+                    Published datasets for Machine Learning are on <a href="https://huggingface.co/tpoellabauer">Hugging Face</a>.</p>
                 <h2 id="education">Education</h2>
-                <p><strong>Doctor of Engineering in Computer Science and AI</strong> <br> 
-                    Technical University of Darmstadt <br> (2023 - 2025)</p>
-                <p><strong>Master of Science in Visual Computing</strong> <br> 
-                    Technical University of Darmstadt <br> (2017 - 2020)</p>
-                <p><strong>Bachelor of Science in Computer Science</strong> <br> 
-                    Technical University of Berlin <br> (2013 - 2017)</p>
-                <p><strong>Matura (Abitur), Electronics &amp; Technical Computer Science</strong> <br> 
-                    H&ouml;here Technische Lehranstalt (HTL) Steyr, Austria <br> (2007 - 2012)</p>
+                <p><strong>Dr.-Ing., Computer Science</strong> <br>
+                    Technical University of Darmstadt, Interactive Graphics Systems <br> (Mar 2023 – Jan 2025) <br>
+                    Thesis: <em>Advancing ML Algorithms for Object Localization in Data-Limited Scenarios</em>. Awarded <em>magna cum laude</em>.</p>
+                <p><strong>Master of Science in Visual Computing</strong> <br>
+                    Technical University of Darmstadt <br> (Oct 2017 – Feb 2020)</p>
+                <p><strong>Bachelor of Science in Computer Science</strong> <br>
+                    Technical University of Berlin <br> (Oct 2013 – Sept 2017)</p>
+                <p><strong>Matura (Abitur), Electronics &amp; Technical Computer Science</strong> <br>
+                    H&ouml;here Technische Lehranstalt (HTL) Steyr, Austria <br> (Sept 2007 – Jun 2012)</p>
                 <h2 id="skills">Skills</h2>
-                <p>
-                    &bull; <strong>Expertise</strong><br>
-                    Computer Vision, Machine Learning, Deep Learning, Industrial AI, Synthetic Data Generation, 
-                    2D Object Detection, 6D Pose Estimation, Semantic Segmentation, Classification, 
-                    3D Scene Reconstruction, Neural Rendering, Generative AI, Domain Adaptation, 
-                    Few-/Zero-Shot Learning, Edge AI, High-Performance Computing (HPC), 
-                    MLOps, Cloud-Native AI Infrastructure.
-                </p>
-                <p>
-                    &bull; <strong>Programming & Technologies</strong><br>
-                    Python, C/C++, Java, SQL, HTML/CSS, Bash/Zsh, Linux, Git, Docker, 
-                    Kubernetes (K8s), OpenShift, SLURM, CI/CD, PyTorch, TensorFlow, Keras, 
-                    NumPy, Scikit-learn, Pandas, OpenCV, LaTeX.
-
-                </p>
-                <p>
-                    &bull; <strong>Infrastructure & DevOps</strong><br>
-                    Experience with cloud-native infrastructure, container orchestration,
-                    GitOps workflows, automated deployment pipelines, and scalable AI infrastructure.
-                    Operating and maintaining a private Kubernetes homelab cluster for testing,
-                    experimentation, infrastructure development, and self-hosted services.
-                </p>
-                <p>
-                    &bull; <strong>Research & Leadership</strong><br>
-                    Technical Leadership, Software Architecture, Applied Research, 
-                    Scientific Writing, Research Supervision, Project Management, 
-                    Customer Collaboration, Technical Presentations, Technology Transfer, 
-                    Cross-Functional Teamwork.
-                </p>
-                <p>
-                    &bull; <strong>Languages</strong><br>
-                    German (native), English (professional proficiency).
-                </p>
+                <ul>
+                    <li><strong>Expertise</strong><br>
+                        Computer Vision, Machine Learning, Deep Learning, Industrial AI, Synthetic Data Generation,
+                        2D Object Detection, 6D Pose Estimation, Semantic Segmentation, Classification,
+                        3D Scene Reconstruction, Neural Rendering, Generative AI, Domain Adaptation,
+                        Few-/Zero-Shot Learning, Edge AI, High-Performance Computing (HPC), Distributed Systems,
+                        Training, Tuning, Monitoring, and Deployment of State-of-the-Art ML Models,
+                        MLOps, Cloud-Native AI Infrastructure.</li>
+                    <li><strong>Programming &amp; Technologies</strong><br>
+                        Python, C/C++, Java, SQL, HTML/CSS, Bash/Zsh, Linux, Git, Docker, Podman,
+                        Kubernetes (K8s), OpenShift, SLURM, CI/CD, PyTorch, TensorFlow, Keras,
+                        NumPy, Scikit-learn, Pandas, OpenCV, LaTeX.</li>
+                    <li><strong>Infrastructure &amp; DevOps</strong><br>
+                        Cloud-native infrastructure, container orchestration, GitOps workflows,
+                        automated deployment pipelines, and scalable AI infrastructure.
+                        Operating a private Kubernetes homelab cluster for experimentation,
+                        infrastructure development, and self-hosted services, including the deployment,
+                        setup, and operation of local coding agents and LLM-based data-retrieval systems.</li>
+                    <li><strong>Research &amp; Leadership</strong><br>
+                        Technical Leadership, Software Architecture, Applied Research,
+                        Scientific Writing, Research Supervision, Project Management,
+                        Customer Collaboration, Technical Presentations, Technology Transfer,
+                        Cross-Functional Teamwork.</li>
+                    <li><strong>Languages</strong><br>
+                        German (native), English (professional proficiency).</li>
+                </ul>
                 <h2 id="achievements">Selected Achievements</h2>
-                <p>&bull; Magna Cum Laude PhD in Computer Science and AI.</p>
-                <p>&bull; Published 20+ peer-reviewed papers in Computer Vision and Machine Learning.</p>
-                <p>&bull; Awarded best project at the BMW-Fraunhofer Innovation Program.</p>
-                <p>&bull; Built scalable AI systems spanning research prototypes to production-ready deployments.</p>
-                <h2 id="links">Links and Resources</h2>
-                <div id="links">
-                    <p><strong>Publications</strong> <br>
-                        You can find my scientific publications on my <a href="https://scholar.google.com/citations?user=HL14YPkAAAAJ&hl=de&oi=ao">Google Scholar</a> 
-                        and <a href="https://orcid.org/0000-0003-0075-1181">ORCID</a> profiles. </p>
-                    <p><strong>Datasets</strong> <br>
-                        You can find my published datasets for Machine Learning applications at 
-                        <a href="https://huggingface.co/tpoellabauer">Huggingface</a>. </p>
-                    <p><strong>Linkedin</strong> <br>
-                        If you want to connect on Linkedin, you can find me
-                        <a href="https://www.linkedin.com/in/tpoellabauer/">here</a>. </p>
-                </div>
-                <h2 id="links">Personal Projects</h2>
-                <div id="projects">
-                    <p>One of my hobbies is creative writing. Although I struggle with considering a work finished, you can find one of my novels <a href="sapiens.html">here</a>.
-                </p>
-                </div>
+                <ul>
+                    <li>Dr.-Ing. in Computer Science awarded <em>magna cum laude</em> (TU Darmstadt, 2025).</li>
+                    <li>20+ peer-reviewed publications in Computer Vision and Machine Learning, including IROS, AIxVR, ISVC, WSCG, and SCIA.</li>
+                    <li>Best pitch (jury award) at the 2nd BMW-Fraunhofer Research Summit (Mar 2023); invited to the BMW-Fraunhofer Technologietag.</li>
+                    <li>Selected for the Software Campus program for IT talent (Feb 2021 – Jun 2022); project funded with €100,000 by the German Federal Ministry of Education and Research (BMBF).</li>
+                    <li>3rd place, Best Industrial Project at Fraunhofer IGD, for the Deutsche Bahn ICE interior surveillance proof of concept.</li>
+                </ul>
+                <h2 id="beyond-work">Beyond Work</h2>
+                <p>I write fiction in my spare time; my science-fiction novel
+                    <a href="sapiens.html"><em>Sapiens 2252</em></a> is available online.</p>
                 <h2 id="contact">Contact</h2>
-                <p>To discuss opportunities, please contact me via the following email address. Thank you. </p>
-                <p>Email: contact (at) this domain</p>
-                <p>Website: thomaspoellabauer.com</p>
-                <a href="#" class="impressum-link" onclick="toggleImpressum()">Impressum</a>
-                <div id="impressum" class="impressum-content">
+                <p>For opportunities and collaborations, email me at
+                    <button type="button" id="contact-email" class="reveal">show email address</button><noscript>
+                    (enable JavaScript to show it, or see the Impressum)</noscript>
+                    or connect on <a href="https://www.linkedin.com/in/tpoellabauer/">LinkedIn</a>.</p>
+                <p><a href="Thomas_Poellabauer_CV.pdf" download>Download CV (PDF)</a></p>
+                <details id="impressum">
+                <summary class="impressum-link">Impressum</summary>
+                <div class="impressum-content">
                     <h2>Impressum</h2>
                     <p><strong>Thomas Pöllabauer-Berkei</strong></p>
                     <p>Address: Gartenstraße 21, 84524, Germany</p>
-                    <p>Email: contact @ thomaspoellabauer . com</p>
+                    <p>Email: <span class="rev">moc.reuaballeopsamoht&#64;tcatnoc</span></p>
                     <p>Website: www.thomaspoellabauer.com</p>
                     <p><strong>Haftung für Links: </strong>
                         Diese Webseite enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich.</p>
                 </div>
+                </details>
             </div>
         </div>
     </div>
@@ -516,22 +603,29 @@
             }));
         })();
 
-        function revealContent() {
-            const container = document.querySelector('.container');
-            container.style.visibility = 'visible';
-            container.style.opacity = '1';
+        // The address is never in the source or the rendered page; it is decoded
+        // only when a visitor clicks, which crawlers do not do.
+        function decodeAddress() {
+            const codes = [116, 118, 106, 53, 121, 108, 124, 104, 105, 104, 115, 115, 108, 118, 119,
+                           122, 104, 116, 118, 111, 123, 71, 123, 106, 104, 123, 117, 118, 106];
+            return String.fromCharCode(...codes.map(c => c - 7)).split('').reverse().join('');
         }
 
-        function toggleImpressum() {
-            const impressum = document.getElementById('impressum');
-            if (impressum.style.display === 'none' || impressum.style.display === '') {
-                impressum.style.display = 'block';
-            } else {
-                impressum.style.display = 'none';
-            }
-        }
+        (function setupContactReveal() {
+            const button = document.getElementById('contact-email');
+            if (!button) return;
+            button.addEventListener('click', () => {
+                const address = decodeAddress();
+                const link = document.createElement('a');
+                link.id = 'contact-email';
+                link.href = 'mailto:' + address;
+                link.textContent = address;
+                button.replaceWith(link);
+                link.focus();
+            }, { once: true });
+        })();
 
-        revealContent();
+
     </script>
 </body>
 </html>

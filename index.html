@@ -215,6 +215,7 @@
         .stage { margin: 0 0 24px; }
         .stage-screen {
             width: 100%;
+            aspect-ratio: 10 / 3;
             overflow: hidden;
             background: #000;
             border: 1px solid var(--neon-line);
@@ -223,7 +224,7 @@
         }
         .stage-screen video { display: block; width: 100%; height: 100%; object-fit: cover; }
         .stage-caption { margin: 10px 0 0; font-size: 0.72rem; line-height: 1.4; color: rgba(0, 255, 204, 0.6); letter-spacing: 0.04em; }
-        .banner-inline { margin-top: 22px; }
+        .banner-inline { margin-top: 34px; margin-bottom: 0; }
         .banner {
             width: 100%;
             height: 190px;
@@ -328,6 +329,7 @@
             .nav-block:hover, .nav-block:focus { transform: none; }
             .banner { height: 140px; margin-bottom: 18px; }
             .stage { margin-bottom: 18px; }
+            .stage-screen { aspect-ratio: 2 / 1; }
             h2 { font-size: 0.95rem; margin: 26px 0 10px; }
         }
         @media (max-width: 480px) {
@@ -365,7 +367,7 @@
             </div>
             <div class="right">
                 <section class="stage" aria-label="6D pose estimation showcase video">
-                    <div class="stage-screen" id="stageScreen" style="aspect-ratio: 10 / 3">
+                    <div class="stage-screen" id="stageScreen">
                         <video id="stageVideo" muted loop playsinline autoplay preload="metadata"
                                poster="media/showcase/banner.jpg" aria-label="Looping 6D pose estimation demo on an industrial conveyor line">
                             <source src="media/showcase/banner.mp4" type="video/mp4">
@@ -481,22 +483,6 @@
                     <li><strong>Languages</strong><br>
                         German (native), English (professional proficiency).</li>
                 </ul>
-                <div class="banner banner-inline">
-                    <svg id="nnSvg" width="100%" height="100%" viewBox="0 0 1000 300"
-                         preserveAspectRatio="xMidYMid meet" role="img"
-                         aria-label="Animated neural network graphic">
-                        <defs>
-                            <radialGradient id="pulseGlowGradient">
-                                <stop offset="0%" stop-color="rgb(220,255,250)" stop-opacity="0.55"/>
-                                <stop offset="45%" stop-color="rgb(0,255,204)" stop-opacity="0.28"/>
-                                <stop offset="100%" stop-color="rgb(0,255,204)" stop-opacity="0"/>
-                            </radialGradient>
-                        </defs>
-                        <g id="neuralNetwork" class="neural-network">
-                            <!-- Nodes, edges and signal pulses are created dynamically -->
-                        </g>
-                    </svg>
-                </div>
                 <h2 id="achievements">Selected Achievements</h2>
                 <ul>
                     <li>Dr.-Ing. in Computer Science awarded <em>magna cum laude</em> (TU Darmstadt, 2025).</li>
@@ -514,6 +500,22 @@
                     (enable JavaScript to show it, or see the Impressum)</noscript>
                     or connect on <a href="https://www.linkedin.com/in/tpoellabauer/">LinkedIn</a>.</p>
                 <p><a href="Thomas_Poellabauer_CV.pdf" download>Download CV (PDF)</a></p>
+                <div class="banner banner-inline">
+                    <svg id="nnSvg" width="100%" height="100%" viewBox="0 0 1000 300"
+                         preserveAspectRatio="xMidYMid meet" role="img"
+                         aria-label="Animated neural network graphic">
+                        <defs>
+                            <radialGradient id="pulseGlowGradient">
+                                <stop offset="0%" stop-color="rgb(220,255,250)" stop-opacity="0.55"/>
+                                <stop offset="45%" stop-color="rgb(0,255,204)" stop-opacity="0.28"/>
+                                <stop offset="100%" stop-color="rgb(0,255,204)" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <g id="neuralNetwork" class="neural-network">
+                            <!-- Nodes, edges and signal pulses are created dynamically -->
+                        </g>
+                    </svg>
+                </div>
                 <details id="impressum">
                 <summary class="impressum-link">Impressum</summary>
                 <div class="impressum-content">
